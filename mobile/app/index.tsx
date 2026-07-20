@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useAuth } from '../src/auth/AuthProvider';
@@ -7,12 +8,21 @@ import { useAuth } from '../src/auth/AuthProvider';
 // users land on.
 export default function IndexScreen() {
   const { session, signOut } = useAuth();
+  const [error, setError] = useState<string | null>(null);
+
+  function handleSignOut() {
+    setError(null);
+    signOut().catch(() => {
+      setError('No se pudo cerrar sesión. Inténtalo de nuevo.');
+    });
+  }
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Sesión iniciada</Text>
       <Text style={styles.email}>{session?.user?.email}</Text>
-      <Pressable style={styles.button} onPress={() => signOut()}>
+      {error ? <Text style={styles.error}>{error}</Text> : null}
+      <Pressable style={styles.button} onPress={handleSignOut}>
         <Text style={styles.buttonText}>Cerrar sesión</Text>
       </Pressable>
       <StatusBar style="auto" />
@@ -36,6 +46,9 @@ const styles = StyleSheet.create({
   email: {
     fontSize: 16,
     color: '#555',
+  },
+  error: {
+    color: '#c0392b',
   },
   button: {
     backgroundColor: '#111',

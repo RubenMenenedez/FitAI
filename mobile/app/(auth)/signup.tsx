@@ -21,6 +21,11 @@ export default function SignupScreen() {
         return;
       }
       router.replace('/');
+    } catch {
+      // A network-level failure (no connectivity, DNS, timeout, ...) throws
+      // instead of resolving to { error }, unlike Better Auth's own
+      // application errors.
+      setError('No se pudo conectar. Revisa tu conexión e inténtalo de nuevo.');
     } finally {
       setIsSubmitting(false);
     }
