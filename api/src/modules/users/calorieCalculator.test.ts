@@ -42,4 +42,32 @@ describe('calculateMacros', () => {
     const carbCalories = 1650 - proteinCalories - fatCalories;
     expect(macros.carbsG).toBeCloseTo(carbCalories / 4);
   });
+
+  it('reparte proteína, grasa y carbos para mantener', () => {
+    // proteína 1.8 g/kg (punto medio de 1.6-2.0), grasa 27.5% (punto medio de 25-30%)
+    const macros = calculateMacros({ weightKg: 70, dailyCalories: 2000, goal: 'maintain' });
+    expect(macros.proteinG).toBeCloseTo(70 * 1.8);
+    const fatCalories = 2000 * 0.275;
+    expect(macros.fatG).toBeCloseTo(fatCalories / 9);
+    const proteinCalories = macros.proteinG * 4;
+    const carbCalories = 2000 - proteinCalories - fatCalories;
+    expect(macros.carbsG).toBeCloseTo(carbCalories / 4);
+  });
+
+  it('reparte proteína, grasa y carbos para ganar músculo', () => {
+    // proteína 2.0 g/kg (punto medio de 1.8-2.2), grasa 27.5% (punto medio de 25-30%)
+    const macros = calculateMacros({ weightKg: 75, dailyCalories: 2800, goal: 'gain_muscle' });
+    expect(macros.proteinG).toBeCloseTo(75 * 2.0);
+    const fatCalories = 2800 * 0.275;
+    expect(macros.fatG).toBeCloseTo(fatCalories / 9);
+    const proteinCalories = macros.proteinG * 4;
+    const carbCalories = 2800 - proteinCalories - fatCalories;
+    expect(macros.carbsG).toBeCloseTo(carbCalories / 4);
+  });
+
+  it('no deja que los carbohidratos bajen de 0 cuando proteína+grasa exceden las calorías diarias', () => {
+    const macros = calculateMacros({ weightKg: 100, dailyCalories: 1200, goal: 'lose_fat' });
+    // proteinCalories = 100*2.2*4 = 880, fatCalories = 1200*0.275 = 330, sum = 1210 > 1200
+    expect(macros.carbsG).toBe(0);
+  });
 });

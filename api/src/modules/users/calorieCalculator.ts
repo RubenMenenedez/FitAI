@@ -42,7 +42,13 @@ export function calculateCalorieTarget(tdee: number, goal: Goal): number {
   return tdee * (1 + CALORIE_ADJUSTMENT[goal]);
 }
 
-export function calculateMacros(input: { weightKg: number; dailyCalories: number; goal: Goal }) {
+export interface Macros {
+  proteinG: number;
+  fatG: number;
+  carbsG: number;
+}
+
+export function calculateMacros(input: { weightKg: number; dailyCalories: number; goal: Goal }): Macros {
   const { weightKg, dailyCalories, goal } = input;
   const proteinG = weightKg * PROTEIN_G_PER_KG[goal];
   const fatCalories = dailyCalories * FAT_PERCENT[goal];
