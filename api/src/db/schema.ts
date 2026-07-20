@@ -1,5 +1,5 @@
 import {
-  pgTable, uuid, text, numeric, integer, timestamp, date, boolean, pgEnum,
+  pgTable, uuid, text, numeric, integer, timestamp, date, pgEnum,
 } from 'drizzle-orm/pg-core';
 
 export const sexEnum = pgEnum('sex', ['male', 'female']);
