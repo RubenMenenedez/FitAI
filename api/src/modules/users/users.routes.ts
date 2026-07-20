@@ -5,7 +5,7 @@ import { completeOnboarding } from './users.service';
 
 const onboardingSchema = z.object({
   sex: z.enum(['male', 'female']),
-  birthDate: z.string().date(),
+  birthDate: z.string().date().refine((d) => new Date(d) <= new Date(), 'birthDate must be in the past'),
   heightCm: z.number().positive(),
   weightKg: z.number().positive(),
   activityLevel: z.enum(['sedentary', 'light', 'moderate', 'active', 'very_active']),

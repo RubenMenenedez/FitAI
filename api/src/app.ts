@@ -6,3 +6,8 @@ export const app = express();
 app.use(cors());
 app.use(express.json());
 app.use('/users', usersRouter);
+
+app.use((err: Error, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
+  console.error(err);
+  res.status(500).json({ error: 'internal server error' });
+});
