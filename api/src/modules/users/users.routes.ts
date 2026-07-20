@@ -1,6 +1,9 @@
 import { Router } from 'express';
 import { z } from 'zod';
+import { eq } from 'drizzle-orm';
 import { requireAuth } from '../../auth/requireAuth';
+import { db } from '../../db/client';
+import { users } from '../../db/schema';
 import { completeOnboarding } from './users.service';
 
 const onboardingSchema = z.object({
@@ -14,6 +17,15 @@ const onboardingSchema = z.object({
 });
 
 export const usersRouter = Router();
+
+usersRouter.get('/me', requireAuth, async (req, res) => {
+  const [user] = await db.select().from(users).where(eq(users.id, req.userId!));
+  if (!user) {
+    res.status(404).json({ error: 'user not found' });
+    return;
+  }
+  res.json(user);
+});
 
 usersRouter.post('/onboarding', requireAuth, async (req, res) => {
   const parsed = onboardingSchema.safeParse(req.body);
