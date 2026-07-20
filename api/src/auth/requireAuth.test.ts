@@ -28,4 +28,12 @@ describe('requireAuth', () => {
     expect(req.userId).toBe('user-123');
     expect(next).toHaveBeenCalled();
   });
+
+  it('responde 401 si el token es inválido o expiró', async () => {
+    vi.spyOn(verifyTokenModule, 'verifyToken').mockRejectedValue(new Error('expired'));
+    const { req, res, next } = mockReqRes('Bearer expired-token');
+    await requireAuth(req, res, next);
+    expect(res.statusCode).toBe(401);
+    expect(next).not.toHaveBeenCalled();
+  });
 });
