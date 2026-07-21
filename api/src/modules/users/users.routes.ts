@@ -14,6 +14,7 @@ const onboardingSchema = z.object({
   activityLevel: z.enum(['sedentary', 'light', 'moderate', 'active', 'very_active']),
   goal: z.enum(['lose_fat', 'maintain', 'gain_muscle']),
   mealsPerDay: z.enum(['3', '5_6']),
+  dietMode: z.enum(['standard', 'keto', 'high_protein', 'vegetarian_vegan']).default('standard'),
 });
 
 export const usersRouter = Router();
