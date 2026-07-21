@@ -15,6 +15,13 @@
       "when": 1784629166362,
       "tag": "0001_eminent_omega_sentinel",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1784630937707,
+      "tag": "0002_youthful_ink",
+      "breakpoints": true
     }
   ]
 }

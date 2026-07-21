@@ -160,3 +160,15 @@ export const progressPhotos = pgTable('progress_photos', {
   weightAtTimeKg: numeric('weight_at_time_kg'),
   takenAt: timestamp('taken_at', { withTimezone: true }).defaultNow(),
 });
+
+export const supermarketEnum = pgEnum('supermarket', ['walmart', 'costco']);
+
+export const supermarketPrices = pgTable('supermarket_prices', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  foodItemId: uuid('food_item_id').references(() => foodItems.id).notNull(),
+  supermarket: supermarketEnum('supermarket').notNull(),
+  productNameRaw: text('product_name_raw').notNull(),
+  price: numeric('price').notNull(),
+  packageSizeG: numeric('package_size_g').notNull(),
+  scrapedAt: timestamp('scraped_at', { withTimezone: true }).defaultNow(),
+});
