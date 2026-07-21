@@ -2,14 +2,15 @@ import { useState } from 'react';
 import { Link, router } from 'expo-router';
 import { View } from 'react-native';
 import { useAuth } from '../../src/auth/AuthProvider';
-import { Screen, Field, Button, AppText, spacing } from '../../src/ui';
+import { Screen, Field, Button, AppText, GoogleLogo, colors, spacing } from '../../src/ui';
 
 export default function LoginScreen() {
-  const { signIn } = useAuth();
+  const { signIn, signInWithGoogle } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
 
   async function handleSubmit() {
     setError(null);
@@ -28,6 +29,23 @@ export default function LoginScreen() {
       setError('No se pudo conectar. Revisa tu conexión e inténtalo de nuevo.');
     } finally {
       setIsSubmitting(false);
+    }
+  }
+
+  async function handleGoogle() {
+    setError(null);
+    setIsGoogleLoading(true);
+    try {
+      const result = await signInWithGoogle();
+      if (result.error) {
+        setError(result.error);
+        return;
+      }
+      // On success the session updates and the root navigator redirects; this
+      // is a harmless fallback in case navigation hasn't settled yet.
+      router.replace('/');
+    } finally {
+      setIsGoogleLoading(false);
     }
   }
 
@@ -70,7 +88,22 @@ export default function LoginScreen() {
         fullWidth
       />
 
-      <View style={{ alignItems: 'center', marginTop: spacing.lg }}>
+      <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.md, marginVertical: spacing.xl }}>
+        <View style={{ flex: 1, height: 1, backgroundColor: colors.border }} />
+        <AppText variant="small" tone="faint" weight="semibold">o</AppText>
+        <View style={{ flex: 1, height: 1, backgroundColor: colors.border }} />
+      </View>
+
+      <Button
+        title="Continuar con Google"
+        variant="secondary"
+        onPress={handleGoogle}
+        loading={isGoogleLoading}
+        leftIcon={<GoogleLogo size={20} />}
+        fullWidth
+      />
+
+      <View style={{ alignItems: 'center', marginTop: spacing.xl }}>
         <Link href="/(auth)/signup">
           <AppText tone="primary">¿No tienes cuenta? Regístrate</AppText>
         </Link>

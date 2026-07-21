@@ -6,4 +6,5 @@ export { Field } from './Field';
 export { Stat, ProgressBar, EmptyState } from './Data';
 export { Ring, MacroRing } from './Ring';
 export { Segmented } from './Segmented';
+export { GoogleLogo } from './GoogleLogo';
 export { theme, colors, spacing, radius, fontSize, fontWeight, shadow } from '../theme';

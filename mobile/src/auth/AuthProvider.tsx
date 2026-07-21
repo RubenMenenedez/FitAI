@@ -22,6 +22,15 @@ interface AuthContextValue {
   isLoading: boolean;
   signIn: (email: string, password: string) => Promise<AuthResult>;
   signUp: (email: string, password: string, name?: string) => Promise<AuthResult>;
+  /**
+   * Google OAuth sign-in. The @better-auth/expo client intercepts this call and
+   * opens the system browser (expo-web-browser) for the OAuth flow, then stores
+   * the resulting session cookie. On success the session signal updates and the
+   * root navigator moves the user past the auth gate — no manual navigation
+   * required. Requires the Google provider to be enabled on the Neon Auth
+   * project and `fitai://` in its trusted origins.
+   */
+  signInWithGoogle: () => Promise<AuthResult>;
   signOut: () => Promise<void>;
   /**
    * Re-attempts exchanging the current Better Auth session for a backend
@@ -110,6 +119,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return { error: error?.message ?? null };
   }
 
+  async function signInWithGoogle(): Promise<AuthResult> {
+    try {
+      // callbackURL is the deep link the OAuth browser session returns to; the
+      // expo plugin resolves it against the `fitai` scheme. The plugin awaits
+      // the browser flow, so this resolves once the session cookie is stored.
+      const { error } = await authClient.signIn.social({ provider: 'google', callbackURL: '/' });
+      return { error: error?.message ?? null };
+    } catch {
+      return { error: 'No se pudo iniciar sesión con Google. Inténtalo de nuevo.' };
+    }
+  }
+
   async function signOut() {
     await authClient.signOut();
     setAuthToken(null);
@@ -126,6 +147,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     isLoading: isPending || !isTokenSynced,
     signIn,
     signUp,
+    signInWithGoogle,
     signOut,
     resyncToken: syncToken,
   };

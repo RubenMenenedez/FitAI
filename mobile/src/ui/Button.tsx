@@ -1,3 +1,4 @@
+import { type ReactNode } from 'react';
 import { Pressable, ActivityIndicator, View, type PressableProps, type ViewStyle } from 'react-native';
 import { colors, radius, spacing, fontSize, fontWeight, shadow } from '../theme';
 import { AppText } from './Typography';
@@ -11,6 +12,7 @@ export interface ButtonProps extends Omit<PressableProps, 'children' | 'style'> 
   size?: Size;
   loading?: boolean;
   fullWidth?: boolean;
+  leftIcon?: ReactNode;
   style?: ViewStyle;
 }
 
@@ -44,6 +46,7 @@ export function Button({
   size = 'lg',
   loading = false,
   fullWidth = true,
+  leftIcon,
   disabled,
   style,
   ...rest
@@ -81,9 +84,12 @@ export function Button({
       {loading ? (
         <ActivityIndicator color={LABEL[variant]} size="small" />
       ) : (
-        <AppText style={{ color: LABEL[variant], fontSize: fontSize.body, fontWeight: fontWeight.bold }}>
-          {title}
-        </AppText>
+        <>
+          {leftIcon}
+          <AppText style={{ color: LABEL[variant], fontSize: fontSize.body, fontWeight: fontWeight.bold }}>
+            {title}
+          </AppText>
+        </>
       )}
     </Pressable>
   );
