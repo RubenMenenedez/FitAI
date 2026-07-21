@@ -32,6 +32,7 @@ export default function TabsLayout() {
       <Tabs.Screen name="groups" options={{ title: t('tabs.nav.groups'), tabBarLabel: t('tabs.nav.groups') }} />
       <Tabs.Screen name="progress-photos" options={{ title: t('tabs.nav.photos'), tabBarLabel: t('tabs.nav.photos') }} />
       <Tabs.Screen name="shopping-list" options={{ href: null }} />
+      <Tabs.Screen name="paywall" options={{ href: null }} />
     </Tabs>
   );
 }

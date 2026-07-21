@@ -1,9 +1,11 @@
+import { useEffect } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Stack } from 'expo-router';
 import { ActivityIndicator, View } from 'react-native';
 import { AuthProvider, useAuth } from '../src/auth/AuthProvider';
 import { I18nProvider } from '../src/i18n';
 import { useOnboardingStatus } from '../src/hooks/useOnboardingStatus';
+import { initPurchases } from '../src/purchases/purchasesClient';
 
 const queryClient = new QueryClient();
 
@@ -20,6 +22,19 @@ function RootNavigation() {
   // Self-gated on auth readiness (see useOnboardingStatus): stays idle for
   // unauthenticated users and only fires once apiClient has a valid token.
   const { isResolving, hasCompletedOnboarding } = useOnboardingStatus();
+
+  // Initialise RevenueCat once when a session is available. Wrapped in
+  // try/catch so it never disrupts the navigation tree; no-ops when the
+  // native module is absent (Expo Go / web).
+  const userId = (session as any)?.user?.id as string | undefined;
+  useEffect(() => {
+    if (!userId) return;
+    try {
+      initPurchases(userId);
+    } catch {
+      /* non-fatal */
+    }
+  }, [userId]);
 
   // Hold on a spinner until auth is settled and -- for a logged-in user --
   // their onboarding status has resolved. Flipping the guards below on

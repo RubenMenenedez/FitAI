@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { View } from 'react-native';
+import { router } from 'expo-router';
 import { useQuery } from '@tanstack/react-query';
 import { apiClient } from '../../src/api/client';
 import { useAuth } from '../../src/auth/AuthProvider';
@@ -16,6 +17,7 @@ import {
   fontWeight,
 } from '../../src/ui';
 import { useT, LanguageToggle } from '../../src/i18n';
+import { AdBanner } from '../../src/ads/adsClient';
 
 export default function DashboardScreen() {
   const { data: user } = useQuery({
@@ -35,6 +37,7 @@ export default function DashboardScreen() {
   }
 
   const hasData = !!user;
+  const isFree = user?.subscriptionStatus === 'free';
   const calories = user?.dailyCalorieTarget ?? '—';
   const proteinG = Number(user?.dailyProteinTargetG ?? 0);
   const carbsG = Number(user?.dailyCarbsTargetG ?? 0);
@@ -96,6 +99,20 @@ export default function DashboardScreen() {
       <View style={{ alignItems: 'center', marginTop: spacing.lg }}>
         <LanguageToggle />
       </View>
+
+      {/* Free-plan: premium upsell CTA + banner ad */}
+      {isFree ? (
+        <View style={{ marginTop: spacing.xl, gap: spacing.md }}>
+          <Button
+            title={t('tabs.premium.goPremium')}
+            variant="primary"
+            onPress={() => router.push('/(tabs)/paywall')}
+          />
+          <View style={{ alignItems: 'center' }}>
+            <AdBanner />
+          </View>
+        </View>
+      ) : null}
     </Screen>
   );
 }

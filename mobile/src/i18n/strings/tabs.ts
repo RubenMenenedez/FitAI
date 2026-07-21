@@ -42,6 +42,28 @@ export const en: Record<string, string> = {
   'tabs.progress.emptyTitle': 'No weigh-ins yet',
   'tabs.progress.emptyMessage': 'Record your first weigh-in to start tracking your progress.',
   'tabs.progress.bmiLabel': 'BMI',
+
+  // Paywall screen
+  'tabs.paywall.title': 'Go Premium',
+  'tabs.paywall.subtitle': 'Unlock everything FitAI has to offer',
+  'tabs.paywall.planMonthlyLabel': 'Monthly',
+  'tabs.paywall.planAnnualLabel': 'Annual',
+  'tabs.paywall.planAnnualBadge': 'Best value',
+  'tabs.paywall.perMonth': '/ month',
+  'tabs.paywall.perYear': '/ year',
+  'tabs.paywall.cta': 'Start Premium',
+  'tabs.paywall.restore': 'Restore purchases',
+  'tabs.paywall.restoreSuccess': 'Purchases restored successfully.',
+  'tabs.paywall.restoreNone': 'No active purchases found.',
+  'tabs.paywall.errorCancelled': 'Purchase cancelled.',
+  'tabs.paywall.errorGeneric': 'Something went wrong. Please try again.',
+  'tabs.paywall.feature1': 'Unlimited AI meal analyses',
+  'tabs.paywall.feature2': 'Smart weekly meal plans',
+  'tabs.paywall.feature3': 'Advanced progress charts',
+  'tabs.paywall.feature4': 'Priority support',
+
+  // Premium upsell (dashboard)
+  'tabs.premium.goPremium': 'Go Premium',
 };
 
 export const es: Record<string, string> = {
@@ -85,4 +107,26 @@ export const es: Record<string, string> = {
   'tabs.progress.emptyTitle': 'Sin pesajes aún',
   'tabs.progress.emptyMessage': 'Registra tu primer pesaje para comenzar a ver tu progreso.',
   'tabs.progress.bmiLabel': 'IMC',
+
+  // Paywall screen
+  'tabs.paywall.title': 'Hazte Premium',
+  'tabs.paywall.subtitle': 'Desbloquea todo lo que FitAI tiene para ofrecer',
+  'tabs.paywall.planMonthlyLabel': 'Mensual',
+  'tabs.paywall.planAnnualLabel': 'Anual',
+  'tabs.paywall.planAnnualBadge': 'Mejor precio',
+  'tabs.paywall.perMonth': '/ mes',
+  'tabs.paywall.perYear': '/ año',
+  'tabs.paywall.cta': 'Empezar Premium',
+  'tabs.paywall.restore': 'Restaurar compras',
+  'tabs.paywall.restoreSuccess': 'Compras restauradas correctamente.',
+  'tabs.paywall.restoreNone': 'No se encontraron compras activas.',
+  'tabs.paywall.errorCancelled': 'Compra cancelada.',
+  'tabs.paywall.errorGeneric': 'Algo salió mal. Inténtalo de nuevo.',
+  'tabs.paywall.feature1': 'Análisis de comidas con IA ilimitados',
+  'tabs.paywall.feature2': 'Planes de comida semanales inteligentes',
+  'tabs.paywall.feature3': 'Gráficas de progreso avanzadas',
+  'tabs.paywall.feature4': 'Soporte prioritario',
+
+  // Premium upsell (dashboard)
+  'tabs.premium.goPremium': 'Hazte Premium',
 };
