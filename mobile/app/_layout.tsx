@@ -2,6 +2,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Stack } from 'expo-router';
 import { ActivityIndicator, View } from 'react-native';
 import { AuthProvider, useAuth } from '../src/auth/AuthProvider';
+import { I18nProvider } from '../src/i18n';
 import { useOnboardingStatus } from '../src/hooks/useOnboardingStatus';
 
 const queryClient = new QueryClient();
@@ -56,10 +57,12 @@ function RootNavigation() {
 
 export default function RootLayout() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <RootNavigation />
-      </AuthProvider>
-    </QueryClientProvider>
+    <I18nProvider>
+      <QueryClientProvider client={queryClient}>
+        <AuthProvider>
+          <RootNavigation />
+        </AuthProvider>
+      </QueryClientProvider>
+    </I18nProvider>
   );
 }
