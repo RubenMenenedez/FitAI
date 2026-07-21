@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { router } from 'expo-router';
-import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import { View } from 'react-native';
 import { useOnboardingStore } from '../../src/state/onboardingStore';
+import { Screen, Field, Button, Chip, AppText, spacing } from '../../src/ui';
 
 const SEX_OPTIONS = [
   { value: 'male', label: 'Hombre' },
@@ -55,29 +56,34 @@ export default function PersonalDataScreen() {
   }
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Tus datos</Text>
+    <Screen
+      title="Tus datos"
+      subtitle="Necesitamos conocerte un poco mejor"
+      keyboard
+      scroll
+    >
+      {error ? (
+        <AppText tone="danger" style={{ marginBottom: spacing.md }}>
+          {error}
+        </AppText>
+      ) : null}
 
-      {error ? <Text style={styles.error}>{error}</Text> : null}
-
-      <Text style={styles.label}>Sexo</Text>
-      <View style={styles.optionRow}>
+      <AppText variant="small" weight="semibold" tone="muted" style={{ marginBottom: spacing.sm }}>
+        Sexo
+      </AppText>
+      <View style={{ flexDirection: 'row', gap: spacing.md, marginBottom: spacing.lg }}>
         {SEX_OPTIONS.map((opt) => (
-          <Pressable
+          <Chip
             key={opt.value}
-            style={[styles.option, sex === opt.value && styles.optionSelected]}
+            label={opt.label}
+            active={sex === opt.value}
             onPress={() => setSex(opt.value)}
-          >
-            <Text style={[styles.optionText, sex === opt.value && styles.optionTextSelected]}>
-              {opt.label}
-            </Text>
-          </Pressable>
+          />
         ))}
       </View>
 
-      <Text style={styles.label}>Fecha de nacimiento</Text>
-      <TextInput
-        style={styles.input}
+      <Field
+        label="Fecha de nacimiento"
         placeholder="AAAA-MM-DD"
         autoCapitalize="none"
         autoCorrect={false}
@@ -86,94 +92,27 @@ export default function PersonalDataScreen() {
         onChangeText={setBirthDate}
       />
 
-      <Text style={styles.label}>Altura (cm)</Text>
-      <TextInput
-        style={styles.input}
+      <Field
+        label="Altura (cm)"
         placeholder="Altura (cm)"
         keyboardType="numeric"
         value={heightCm}
         onChangeText={setHeightCm}
       />
 
-      <Text style={styles.label}>Peso (kg)</Text>
-      <TextInput
-        style={styles.input}
+      <Field
+        label="Peso (kg)"
         placeholder="Peso (kg)"
         keyboardType="numeric"
         value={weightKg}
         onChangeText={setWeightKg}
       />
 
-      <Pressable style={styles.button} onPress={handleNext}>
-        <Text style={styles.buttonText}>Siguiente</Text>
-      </Pressable>
-    </View>
+      <Button
+        title="Siguiente"
+        onPress={handleNext}
+        fullWidth
+      />
+    </Screen>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    justifyContent: 'center',
-    padding: 24,
-    gap: 10,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: '700',
-    marginBottom: 8,
-  },
-  label: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#333',
-    marginTop: 4,
-  },
-  optionRow: {
-    flexDirection: 'row',
-    gap: 12,
-  },
-  option: {
-    flex: 1,
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 8,
-    paddingVertical: 12,
-    alignItems: 'center',
-  },
-  optionSelected: {
-    borderColor: '#111',
-    backgroundColor: '#111',
-  },
-  optionText: {
-    fontSize: 16,
-    color: '#111',
-  },
-  optionTextSelected: {
-    color: '#fff',
-    fontWeight: '600',
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 8,
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-    fontSize: 16,
-  },
-  button: {
-    backgroundColor: '#111',
-    paddingVertical: 12,
-    borderRadius: 8,
-    alignItems: 'center',
-    marginTop: 16,
-  },
-  buttonText: {
-    color: '#fff',
-    fontWeight: '600',
-  },
-  error: {
-    color: '#c0392b',
-  },
-});

@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { Link, router } from 'expo-router';
-import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import { View } from 'react-native';
 import { useAuth } from '../../src/auth/AuthProvider';
+import { Screen, Field, Button, AppText, spacing } from '../../src/ui';
 
 export default function SignupScreen() {
   const { signUp } = useAuth();
@@ -32,21 +33,28 @@ export default function SignupScreen() {
   }
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Crear cuenta</Text>
+    <Screen
+      title="Crear cuenta"
+      subtitle="Empieza tu experiencia FitAI"
+      keyboard
+      scroll
+    >
+      {error ? (
+        <AppText tone="danger" style={{ marginBottom: spacing.md }}>
+          {error}
+        </AppText>
+      ) : null}
 
-      {error ? <Text style={styles.error}>{error}</Text> : null}
-
-      <TextInput
-        style={styles.input}
+      <Field
+        label="Nombre"
         placeholder="Nombre"
         autoCapitalize="words"
         autoComplete="name"
         value={name}
         onChangeText={setName}
       />
-      <TextInput
-        style={styles.input}
+      <Field
+        label="Email"
         placeholder="Email"
         autoCapitalize="none"
         autoComplete="email"
@@ -54,8 +62,8 @@ export default function SignupScreen() {
         value={email}
         onChangeText={setEmail}
       />
-      <TextInput
-        style={styles.input}
+      <Field
+        label="Contraseña"
         placeholder="Contraseña"
         secureTextEntry
         autoCapitalize="none"
@@ -64,61 +72,18 @@ export default function SignupScreen() {
         onChangeText={setPassword}
       />
 
-      <Pressable
-        style={[styles.button, isSubmitting && styles.buttonDisabled]}
+      <Button
+        title="Crear cuenta"
         onPress={handleSubmit}
-        disabled={isSubmitting}
-      >
-        <Text style={styles.buttonText}>{isSubmitting ? 'Creando...' : 'Crear cuenta'}</Text>
-      </Pressable>
+        loading={isSubmitting}
+        fullWidth
+      />
 
-      <Link href="/(auth)/login" style={styles.link}>
-        <Text>¿Ya tienes cuenta? Inicia sesión</Text>
-      </Link>
-    </View>
+      <View style={{ alignItems: 'center', marginTop: spacing.lg }}>
+        <Link href="/(auth)/login">
+          <AppText tone="primary">¿Ya tienes cuenta? Inicia sesión</AppText>
+        </Link>
+      </View>
+    </Screen>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    justifyContent: 'center',
-    padding: 24,
-    gap: 12,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: '700',
-    marginBottom: 8,
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 8,
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-    fontSize: 16,
-  },
-  button: {
-    backgroundColor: '#111',
-    paddingVertical: 12,
-    borderRadius: 8,
-    alignItems: 'center',
-    marginTop: 8,
-  },
-  buttonDisabled: {
-    opacity: 0.5,
-  },
-  buttonText: {
-    color: '#fff',
-    fontWeight: '600',
-  },
-  error: {
-    color: '#c0392b',
-  },
-  link: {
-    marginTop: 16,
-    alignSelf: 'center',
-  },
-});

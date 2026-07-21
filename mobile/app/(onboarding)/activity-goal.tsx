@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { router } from 'expo-router';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { View } from 'react-native';
 import { useOnboardingStore } from '../../src/state/onboardingStore';
+import { Screen, Button, Chip, AppText, spacing } from '../../src/ui';
 
 const ACTIVITY_OPTIONS = [
   { value: 'sedentary', label: 'Sedentario' },
@@ -35,96 +36,50 @@ export default function ActivityGoalScreen() {
   }
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Actividad y objetivo</Text>
+    <Screen
+      title="Actividad y objetivo"
+      subtitle="Personaliza tu plan de nutrición"
+      scroll
+    >
+      {error ? (
+        <AppText tone="danger" style={{ marginBottom: spacing.md }}>
+          {error}
+        </AppText>
+      ) : null}
 
-      {error ? <Text style={styles.error}>{error}</Text> : null}
-
-      <Text style={styles.label}>Nivel de actividad</Text>
-      {ACTIVITY_OPTIONS.map((opt) => {
-        const selected = data.activityLevel === opt.value;
-        return (
-          <Pressable
+      <AppText variant="small" weight="semibold" tone="muted" style={{ marginBottom: spacing.sm }}>
+        Nivel de actividad
+      </AppText>
+      <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm, marginBottom: spacing.xl }}>
+        {ACTIVITY_OPTIONS.map((opt) => (
+          <Chip
             key={opt.value}
-            style={[styles.option, selected && styles.optionSelected]}
+            label={opt.label}
+            active={data.activityLevel === opt.value}
             onPress={() => setData({ activityLevel: opt.value })}
-          >
-            <Text style={[styles.optionText, selected && styles.optionTextSelected]}>{opt.label}</Text>
-          </Pressable>
-        );
-      })}
+          />
+        ))}
+      </View>
 
-      <Text style={styles.label}>Objetivo</Text>
-      {GOAL_OPTIONS.map((opt) => {
-        const selected = data.goal === opt.value;
-        return (
-          <Pressable
+      <AppText variant="small" weight="semibold" tone="muted" style={{ marginBottom: spacing.sm }}>
+        Objetivo
+      </AppText>
+      <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm, marginBottom: spacing.xl }}>
+        {GOAL_OPTIONS.map((opt) => (
+          <Chip
             key={opt.value}
-            style={[styles.option, selected && styles.optionSelected]}
+            label={opt.label}
+            active={data.goal === opt.value}
             onPress={() => setData({ goal: opt.value })}
-          >
-            <Text style={[styles.optionText, selected && styles.optionTextSelected]}>{opt.label}</Text>
-          </Pressable>
-        );
-      })}
+          />
+        ))}
+      </View>
 
-      <Pressable style={styles.button} onPress={handleNext}>
-        <Text style={styles.buttonText}>Siguiente</Text>
-      </Pressable>
-    </View>
+      <Button
+        title="Siguiente"
+        onPress={handleNext}
+        fullWidth
+      />
+    </Screen>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    justifyContent: 'center',
-    padding: 24,
-    gap: 8,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: '700',
-    marginBottom: 8,
-  },
-  label: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#333',
-    marginTop: 8,
-  },
-  option: {
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 8,
-    paddingVertical: 12,
-    paddingHorizontal: 14,
-  },
-  optionSelected: {
-    borderColor: '#111',
-    backgroundColor: '#111',
-  },
-  optionText: {
-    fontSize: 16,
-    color: '#111',
-  },
-  optionTextSelected: {
-    color: '#fff',
-    fontWeight: '600',
-  },
-  button: {
-    backgroundColor: '#111',
-    paddingVertical: 12,
-    borderRadius: 8,
-    alignItems: 'center',
-    marginTop: 16,
-  },
-  buttonText: {
-    color: '#fff',
-    fontWeight: '600',
-  },
-  error: {
-    color: '#c0392b',
-  },
-});

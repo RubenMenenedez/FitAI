@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { View } from 'react-native';
 import { useOnboardingStore } from '../../src/state/onboardingStore';
 import { apiClient } from '../../src/api/client';
 import { ME_QUERY_KEY } from '../../src/hooks/useOnboardingStatus';
+import { Screen, Button, AppText, spacing } from '../../src/ui';
 
 const MEAL_OPTIONS = [
   { value: '3', label: '3 comidas (desayuno, comida, cena)' },
@@ -58,61 +59,28 @@ export default function MealsPerDayScreen() {
   }
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>¿Cuántas comidas al día prefieres?</Text>
+    <Screen
+      title="¿Cuántas comidas al día prefieres?"
+      subtitle="Adaptaremos tu plan a tu rutina"
+    >
+      {error ? (
+        <AppText tone="danger" style={{ marginBottom: spacing.md }}>
+          {error}
+        </AppText>
+      ) : null}
 
-      {error ? <Text style={styles.error}>{error}</Text> : null}
-
-      {MEAL_OPTIONS.map((opt) => (
-        <Pressable
-          key={opt.value}
-          style={[styles.option, isSubmitting && styles.optionDisabled]}
-          onPress={() => handleFinish(opt.value)}
-          disabled={isSubmitting}
-        >
-          <Text style={styles.optionText}>{opt.label}</Text>
-        </Pressable>
-      ))}
-
-      {isSubmitting ? <Text style={styles.hint}>Guardando...</Text> : null}
-    </View>
+      <View style={{ gap: spacing.md }}>
+        {MEAL_OPTIONS.map((opt) => (
+          <Button
+            key={opt.value}
+            title={opt.label}
+            variant="secondary"
+            onPress={() => handleFinish(opt.value)}
+            loading={isSubmitting}
+            fullWidth
+          />
+        ))}
+      </View>
+    </Screen>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    justifyContent: 'center',
-    padding: 24,
-    gap: 12,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: '700',
-    marginBottom: 8,
-  },
-  option: {
-    borderWidth: 1,
-    borderColor: '#111',
-    borderRadius: 8,
-    paddingVertical: 16,
-    paddingHorizontal: 14,
-    alignItems: 'center',
-  },
-  optionDisabled: {
-    opacity: 0.5,
-  },
-  optionText: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#111',
-  },
-  hint: {
-    textAlign: 'center',
-    color: '#555',
-  },
-  error: {
-    color: '#c0392b',
-  },
-});

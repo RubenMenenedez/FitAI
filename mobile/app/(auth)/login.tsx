@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { Link, router } from 'expo-router';
-import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import { View } from 'react-native';
 import { useAuth } from '../../src/auth/AuthProvider';
+import { Screen, Field, Button, AppText, spacing } from '../../src/ui';
 
 export default function LoginScreen() {
   const { signIn } = useAuth();
@@ -31,13 +32,20 @@ export default function LoginScreen() {
   }
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Iniciar sesión</Text>
+    <Screen
+      title="Iniciar sesión"
+      subtitle="Bienvenido de nuevo"
+      keyboard
+      scroll
+    >
+      {error ? (
+        <AppText tone="danger" style={{ marginBottom: spacing.md }}>
+          {error}
+        </AppText>
+      ) : null}
 
-      {error ? <Text style={styles.error}>{error}</Text> : null}
-
-      <TextInput
-        style={styles.input}
+      <Field
+        label="Email"
         placeholder="Email"
         autoCapitalize="none"
         autoComplete="email"
@@ -45,8 +53,8 @@ export default function LoginScreen() {
         value={email}
         onChangeText={setEmail}
       />
-      <TextInput
-        style={styles.input}
+      <Field
+        label="Contraseña"
         placeholder="Contraseña"
         secureTextEntry
         autoCapitalize="none"
@@ -55,61 +63,18 @@ export default function LoginScreen() {
         onChangeText={setPassword}
       />
 
-      <Pressable
-        style={[styles.button, isSubmitting && styles.buttonDisabled]}
+      <Button
+        title="Entrar"
         onPress={handleSubmit}
-        disabled={isSubmitting}
-      >
-        <Text style={styles.buttonText}>{isSubmitting ? 'Entrando...' : 'Entrar'}</Text>
-      </Pressable>
+        loading={isSubmitting}
+        fullWidth
+      />
 
-      <Link href="/(auth)/signup" style={styles.link}>
-        <Text>¿No tienes cuenta? Regístrate</Text>
-      </Link>
-    </View>
+      <View style={{ alignItems: 'center', marginTop: spacing.lg }}>
+        <Link href="/(auth)/signup">
+          <AppText tone="primary">¿No tienes cuenta? Regístrate</AppText>
+        </Link>
+      </View>
+    </Screen>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    justifyContent: 'center',
-    padding: 24,
-    gap: 12,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: '700',
-    marginBottom: 8,
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 8,
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-    fontSize: 16,
-  },
-  button: {
-    backgroundColor: '#111',
-    paddingVertical: 12,
-    borderRadius: 8,
-    alignItems: 'center',
-    marginTop: 8,
-  },
-  buttonDisabled: {
-    opacity: 0.5,
-  },
-  buttonText: {
-    color: '#fff',
-    fontWeight: '600',
-  },
-  error: {
-    color: '#c0392b',
-  },
-  link: {
-    marginTop: 16,
-    alignSelf: 'center',
-  },
-});
