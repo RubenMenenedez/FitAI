@@ -77,6 +77,39 @@ export const en: Record<string, string> = {
   'app.planner.generate': "Generate this week's plan",
   'app.planner.empty': 'No plan yet. Generate one to get started.',
 
+  // Shopping list
+  'app.shop.title': 'Shopping list',
+  'app.shop.tabWeek': 'This week',
+  'app.shop.tabRecipe': 'By recipe',
+  'app.shop.tabCategory': 'By category',
+  'app.shop.ingredients': 'ingredients',
+  'app.shop.approxPrice': 'approx. price',
+  'app.shop.bestPrice': 'Best price',
+  'app.shop.compare': 'Compare prices',
+  'app.shop.needed': 'needed',
+
+  // Pace step
+  'app.pace.dailyTarget': 'Daily calorie target',
+  'app.pace.cal': 'cal',
+  'app.pace.reachIn': "You'll reach your goal in",
+  'app.pace.weeks': 'weeks',
+  'app.pace.perWeek': 'per week',
+
+  // Welcome (landing)
+  'app.welcome.headline': 'Effortless calorie tracking',
+  'app.welcome.sub': 'Scan your food, hit your goals, feel your best.',
+  'app.welcome.start': 'Get started',
+  'app.welcome.haveAccount': 'Already have an account?',
+  'app.welcome.login': 'Log in',
+
+  // Community
+  'app.community.title': 'Community',
+  'app.community.tabForYou': 'For you',
+  'app.community.tabFollowing': 'Following',
+  'app.community.tabGroups': 'Groups',
+  'app.community.public': 'Public groups',
+  'app.community.create': 'Create',
+
   // Days (short)
   'app.day.mon': 'M',
   'app.day.tue': 'T',
@@ -162,6 +195,39 @@ export const es: Record<string, string> = {
   'app.planner.change': 'Cambiar comidas',
   'app.planner.generate': 'Generar plan de esta semana',
   'app.planner.empty': 'Aún no hay plan. Genera uno para empezar.',
+
+  // Lista de compra
+  'app.shop.title': 'Lista de compra',
+  'app.shop.tabWeek': 'Esta semana',
+  'app.shop.tabRecipe': 'Por receta',
+  'app.shop.tabCategory': 'Por categoría',
+  'app.shop.ingredients': 'ingredientes',
+  'app.shop.approxPrice': 'precio aprox.',
+  'app.shop.bestPrice': 'Mejor precio',
+  'app.shop.compare': 'Comparar precios',
+  'app.shop.needed': 'necesario',
+
+  // Paso de velocidad
+  'app.pace.dailyTarget': 'Objetivo calórico diario',
+  'app.pace.cal': 'cal',
+  'app.pace.reachIn': 'Alcanzas tu meta en',
+  'app.pace.weeks': 'semanas',
+  'app.pace.perWeek': 'por semana',
+
+  // Bienvenida (landing)
+  'app.welcome.headline': 'Seguimiento de calorías sencillo',
+  'app.welcome.sub': 'Escanea tu comida, alcanza tus objetivos, siéntete mejor.',
+  'app.welcome.start': 'Comenzar',
+  'app.welcome.haveAccount': '¿Ya tienes una cuenta?',
+  'app.welcome.login': 'Iniciar sesión',
+
+  // Comunidad
+  'app.community.title': 'Comunidad',
+  'app.community.tabForYou': 'Para ti',
+  'app.community.tabFollowing': 'Siguiendo',
+  'app.community.tabGroups': 'Grupos',
+  'app.community.public': 'Grupos públicos',
+  'app.community.create': 'Crear',
 
   // Días (corto)
   'app.day.mon': 'L',

@@ -4,7 +4,7 @@
  * Conditional steps (9, 10, 14) are filtered out when not applicable.
  */
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { View, ScrollView, Platform, KeyboardAvoidingView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useQueryClient } from '@tanstack/react-query';
@@ -20,10 +20,21 @@ import {
   Button,
   Chip,
   Field,
+  Card,
+  Segmented,
+  OptionCard,
+  WheelPicker,
+  RulerSlider,
+  PaceSlider,
+  type PaceStop,
   colors,
   spacing,
   radius,
+  fontSize,
+  fontWeight,
 } from '../../src/ui';
+import { kgToLb, lbToKg, cmToFtIn, ftInToCm, formatFtIn } from '../../src/lib/units';
+import { estimateDailyCalories, estimateWeeksToGoal } from '../../src/lib/nutritionEstimate';
 
 // ─── helpers ─────────────────────────────────────────────────────────────────
 
@@ -138,16 +149,17 @@ function SexStep({
 }) {
   const t = useT();
   return (
-    <ChipRow>
+    <View style={{ gap: spacing.md, marginTop: spacing.md }}>
       {(['male', 'female'] as const).map((v) => (
-        <Chip
+        <OptionCard
           key={v}
           label={t(v === 'male' ? 'auth.q.sex.male' : 'auth.q.sex.female')}
-          active={data.sex === v}
+          icon={<AppText style={{ fontSize: 22, color: colors.primary }}>{v === 'male' ? '♂' : '♀'}</AppText>}
+          selected={data.sex === v}
           onPress={() => setData({ sex: v })}
         />
       ))}
-    </ChipRow>
+    </View>
   );
 }
 
@@ -177,25 +189,46 @@ function BirthDateStep({
 }
 
 // ─── Step: height ─────────────────────────────────────────────────────────────
+const HEIGHT_OPTIONS = Array.from({ length: 101 }, (_, i) => 120 + i); // 120..220 cm
+
 function HeightStep({
   value,
   onChange,
-  error,
 }: {
   value: string;
   onChange: (v: string) => void;
   error?: string;
 }) {
-  const t = useT();
+  const [unit, setUnit] = useState<'cm' | 'ft'>('cm');
+  const cm = value ? Math.round(Number(value)) : 168;
+  // Seed the default so Continue enables without forcing a scroll.
+  useEffect(() => {
+    if (!value) onChange('168');
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
-    <Field
-      placeholder={t('auth.q.height.placeholder')}
-      value={value}
-      onChangeText={onChange}
-      keyboardType="numeric"
-      error={error}
-      style={{ marginTop: spacing.md }}
-    />
+    <View style={{ marginTop: spacing.md, gap: spacing.xl, alignItems: 'center' }}>
+      <View style={{ width: 180 }}>
+        <Segmented
+          value={unit}
+          onChange={(v) => setUnit(v as 'cm' | 'ft')}
+          options={[{ value: 'cm', label: 'cm' }, { value: 'ft', label: 'ft, in' }]}
+        />
+      </View>
+      <View style={{ width: '100%' }}>
+        <WheelPicker
+          options={HEIGHT_OPTIONS}
+          value={cm}
+          onChange={(v) => onChange(String(v))}
+          formatLabel={(v) => {
+            if (unit === 'cm') return `${v} cm`;
+            const { ft, inch } = cmToFtIn(v);
+            return formatFtIn(ft, inch);
+          }}
+        />
+      </View>
+    </View>
   );
 }
 
@@ -203,22 +236,41 @@ function HeightStep({
 function WeightStep({
   value,
   onChange,
-  error,
 }: {
   value: string;
   onChange: (v: string) => void;
   error?: string;
 }) {
-  const t = useT();
+  const [unit, setUnit] = useState<'kg' | 'lb'>('kg');
+  const kg = value ? Number(value) : 70;
+  // Seed the default so Continue enables without forcing a scroll.
+  useEffect(() => {
+    if (!value) onChange('70');
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  const display = unit === 'kg'
+    ? (Number.isInteger(kg) ? `${kg}` : kg.toFixed(1))
+    : `${Math.round(kgToLb(kg))}`;
+
   return (
-    <Field
-      placeholder={t('auth.q.weight.placeholder')}
-      value={value}
-      onChangeText={onChange}
-      keyboardType="numeric"
-      error={error}
-      style={{ marginTop: spacing.md }}
-    />
+    <View style={{ marginTop: spacing.md, gap: spacing.xl, alignItems: 'center' }}>
+      <View style={{ width: 180 }}>
+        <Segmented
+          value={unit}
+          onChange={(v) => setUnit(v as 'kg' | 'lb')}
+          options={[{ value: 'lb', label: 'lbs' }, { value: 'kg', label: 'kg' }]}
+        />
+      </View>
+      <View style={{ alignItems: 'center' }}>
+        <View style={{ flexDirection: 'row', alignItems: 'baseline', gap: spacing.xs }}>
+          <AppText style={{ fontSize: fontSize.display, fontWeight: fontWeight.heavy }}>{display}</AppText>
+          <AppText variant="h3" tone="muted" weight="semibold">{unit}</AppText>
+        </View>
+      </View>
+      <View style={{ width: '100%' }}>
+        <RulerSlider min={30} max={200} step={0.5} value={kg} onChange={(v) => onChange(String(v))} />
+      </View>
+    </View>
   );
 }
 
@@ -306,10 +358,11 @@ function TrainingDaysStep({
 const GOAL_OPTIONS: Array<{
   value: NonNullable<OnboardingData['goal']>;
   key: string;
+  emoji: string;
 }> = [
-  { value: 'lose_fat',     key: 'auth.q.goal.loseFat'    },
-  { value: 'maintain',     key: 'auth.q.goal.maintain'   },
-  { value: 'gain_muscle',  key: 'auth.q.goal.gainMuscle' },
+  { value: 'lose_fat',     key: 'auth.q.goal.loseFat',    emoji: '🔥' },
+  { value: 'gain_muscle',  key: 'auth.q.goal.gainMuscle', emoji: '💪' },
+  { value: 'maintain',     key: 'auth.q.goal.maintain',   emoji: '⚖️' },
 ];
 
 function GoalStep({
@@ -321,16 +374,17 @@ function GoalStep({
 }) {
   const t = useT();
   return (
-    <ChipRow>
+    <View style={{ gap: spacing.md, marginTop: spacing.md }}>
       {GOAL_OPTIONS.map((opt) => (
-        <Chip
+        <OptionCard
           key={opt.value}
           label={t(opt.key)}
-          active={data.goal === opt.value}
+          icon={<AppText style={{ fontSize: 22 }}>{opt.emoji}</AppText>}
+          selected={data.goal === opt.value}
           onPress={() => setData({ goal: opt.value })}
         />
       ))}
-    </ChipRow>
+    </View>
   );
 }
 
@@ -358,12 +412,6 @@ function TargetWeightStep({
 }
 
 // ─── Step: pace ───────────────────────────────────────────────────────────────
-const PACE_OPTIONS: Array<{ value: number; key: string }> = [
-  { value: 0.25, key: 'auth.q.pace.conservative' },
-  { value: 0.5,  key: 'auth.q.pace.moderate'     },
-  { value: 0.75, key: 'auth.q.pace.aggressive'   },
-];
-
 function PaceStep({
   data,
   setData,
@@ -372,17 +420,45 @@ function PaceStep({
   setData: (d: Partial<OnboardingData>) => void;
 }) {
   const t = useT();
+  // Default to the recommended pace so Continue is enabled on arrival.
+  useEffect(() => {
+    if (data.weeklyRateKg == null) setData({ weeklyRateKg: 0.5 });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  const stops: PaceStop[] = [
+    { value: 0.25, label: t('auth.q.pace.conservative'), emoji: '🦥' },
+    { value: 0.5,  label: t('auth.q.pace.moderate'),     emoji: '🐇' },
+    { value: 0.75, label: t('auth.q.pace.aggressive'),   emoji: '🐆' },
+  ];
+  const rate = data.weeklyRateKg ?? 0.5;
+  const calories = estimateDailyCalories({ ...data, weeklyRateKg: rate });
+  const weeks = estimateWeeksToGoal({ ...data, weeklyRateKg: rate });
+
   return (
-    <ChipRow>
-      {PACE_OPTIONS.map((opt) => (
-        <Chip
-          key={opt.value}
-          label={t(opt.key)}
-          active={data.weeklyRateKg === opt.value}
-          onPress={() => setData({ weeklyRateKg: opt.value })}
-        />
-      ))}
-    </ChipRow>
+    <View style={{ marginTop: spacing.lg, gap: spacing.xl }}>
+      <View style={{ alignItems: 'center' }}>
+        <AppText variant="small" tone="muted" weight="semibold">{t('app.pace.perWeek')}</AppText>
+        <View style={{ flexDirection: 'row', alignItems: 'baseline', gap: spacing.xs, marginTop: spacing.xs }}>
+          <AppText style={{ fontSize: fontSize.display, fontWeight: fontWeight.heavy }}>{rate.toString().replace('.', ',')}</AppText>
+          <AppText variant="h3" tone="muted" weight="semibold">kg</AppText>
+        </View>
+      </View>
+
+      <PaceSlider stops={stops} value={rate} onChange={(v) => setData({ weeklyRateKg: v })} />
+
+      {calories != null ? (
+        <Card style={{ backgroundColor: colors.surfaceAlt, borderWidth: 0 }}>
+          {weeks != null ? (
+            <AppText variant="body" weight="bold" style={{ marginBottom: spacing.xs }}>
+              {`${t('app.pace.reachIn')} ~${weeks} ${t('app.pace.weeks')}`}
+            </AppText>
+          ) : null}
+          <AppText variant="small" tone="muted">
+            {`${t('app.pace.dailyTarget')}: ${calories} ${t('app.pace.cal')}`}
+          </AppText>
+        </Card>
+      ) : null}
+    </View>
   );
 }
 
