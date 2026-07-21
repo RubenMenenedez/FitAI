@@ -1,5 +1,5 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { Redirect, Stack, useSegments } from 'expo-router';
+import { Stack } from 'expo-router';
 import { ActivityIndicator, View } from 'react-native';
 import { AuthProvider, useAuth } from '../src/auth/AuthProvider';
 import { useOnboardingStatus } from '../src/hooks/useOnboardingStatus';
@@ -15,52 +15,43 @@ function Loading() {
 }
 
 function RootNavigation() {
-  const { session, isLoading } = useAuth();
-  const segments = useSegments();
-  // Hooks must run unconditionally; the query inside is self-gated on auth
-  // readiness (see useOnboardingStatus), so it stays idle for unauthenticated
-  // users and only fires once apiClient has a valid Bearer token.
-  const { isResolving, hasCompletedOnboarding, isError } = useOnboardingStatus();
+  const { session, isLoading: authLoading } = useAuth();
+  // Self-gated on auth readiness (see useOnboardingStatus): stays idle for
+  // unauthenticated users and only fires once apiClient has a valid token.
+  const { isResolving, hasCompletedOnboarding } = useOnboardingStatus();
 
-  if (isLoading) {
+  // Hold on a spinner until auth is settled and -- for a logged-in user --
+  // their onboarding status has resolved. Flipping the guards below on
+  // half-known state is what would flash the wrong screen or thrash the
+  // navigator; gating here keeps every guard derived from settled values.
+  if (authLoading || (session && isResolving)) {
     return <Loading />;
   }
 
-  const inAuthGroup = segments[0] === '(auth)';
-  const inOnboardingGroup = segments[0] === '(onboarding)';
+  const isAuthed = !!session;
+  const needsOnboarding = isAuthed && !hasCompletedOnboarding;
+  const isOnboarded = isAuthed && hasCompletedOnboarding;
 
-  if (!session && !inAuthGroup) {
-    return <Redirect href="/(auth)/login" />;
-  }
+  // Declarative route guards (expo-router's documented pattern for SDK 53+):
+  // at most one group is accessible for a given auth/onboarding state, and
+  // expo-router moves the user into the accessible group itself -- no
+  // render-time <Redirect> chains, which are what caused the navigation
+  // "maximum update depth exceeded" loop.
+  return (
+    <Stack screenOptions={{ headerShown: false }}>
+      <Stack.Protected guard={!isAuthed}>
+        <Stack.Screen name="(auth)" />
+      </Stack.Protected>
 
-  if (session && inAuthGroup) {
-    // Authenticated users never stay in the (auth) group; where they go next
-    // (onboarding vs. landing) is decided on the next render by the block
-    // below once they're out of it.
-    return <Redirect href="/" />;
-  }
+      <Stack.Protected guard={needsOnboarding}>
+        <Stack.Screen name="(onboarding)" />
+      </Stack.Protected>
 
-  if (session && !inAuthGroup) {
-    // Still fetching onboarding status: hold on a spinner rather than flash
-    // the landing screen and then bounce into onboarding (or vice versa).
-    if (isResolving) {
-      return <Loading />;
-    }
-
-    // Fail open on a /users/me error: let the user reach whatever screen
-    // they're on instead of trapping them in a redirect loop. A transient
-    // error clears on the query's own retry/refetch.
-    if (!isError) {
-      if (!hasCompletedOnboarding && !inOnboardingGroup) {
-        return <Redirect href="/(onboarding)/personal-data" />;
-      }
-      if (hasCompletedOnboarding && inOnboardingGroup) {
-        return <Redirect href="/" />;
-      }
-    }
-  }
-
-  return <Stack screenOptions={{ headerShown: false }} />;
+      <Stack.Protected guard={isOnboarded}>
+        <Stack.Screen name="index" />
+      </Stack.Protected>
+    </Stack>
+  );
 }
 
 export default function RootLayout() {

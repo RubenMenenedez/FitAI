@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { router } from 'expo-router';
 import { useQueryClient } from '@tanstack/react-query';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useOnboardingStore } from '../../src/state/onboardingStore';
@@ -41,12 +40,14 @@ export default function MealsPerDayScreen() {
     setIsSubmitting(true);
     apiClient
       .post('/users/onboarding', payload)
-      .then(async () => {
-        // Force the auth gate's /users/me query to refetch so it now sees the
-        // completed onboarding (dailyCalorieTarget populated) and lets us into
-        // the landing screen instead of bouncing back into onboarding.
-        await queryClient.invalidateQueries({ queryKey: ME_QUERY_KEY });
-        router.replace('/');
+      .then((res) => {
+        // Seed the auth gate's /users/me cache with the just-updated user
+        // (dailyCalorieTarget is now populated). That flips the gate's
+        // onboarding guard, so expo-router moves us to the landing screen on
+        // its own -- no manual navigation needed. Invalidate afterwards so the
+        // cache reconciles with the server on the next refetch.
+        queryClient.setQueryData(ME_QUERY_KEY, res.data);
+        void queryClient.invalidateQueries({ queryKey: ME_QUERY_KEY });
       })
       .catch(() => {
         setError('No se pudo guardar. Revisa tu conexión e inténtalo de nuevo.');
