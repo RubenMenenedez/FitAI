@@ -5,7 +5,9 @@ import { findBestFoodItemMatch, type FoodItemCandidate } from '../db/seed/matchF
 // que realmente aparezcan en los scrapers añadidos (cada supermercado nuevo puede sumar entradas).
 export const ES_EN_INGREDIENT_MAP: Record<string, string> = {
   'pechuga de pollo': 'chicken breast',
+  'pollo': 'chicken',
   'arroz blanco': 'white rice',
+  'arroz': 'rice',
   'huevo': 'egg',
   'atun': 'tuna',
 };
