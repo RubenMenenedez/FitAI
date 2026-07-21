@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { View } from 'react-native';
 import { router } from 'expo-router';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { apiClient } from '../../src/api/client';
 import { useAuth } from '../../src/auth/AuthProvider';
 import {
@@ -18,8 +18,10 @@ import {
 } from '../../src/ui';
 import { useT, LanguageToggle } from '../../src/i18n';
 import { AdBanner } from '../../src/ads/adsClient';
+import { presentRevenueCatPaywall, presentCustomerCenter } from '../../src/purchases/rcUi';
 
 export default function DashboardScreen() {
+  const queryClient = useQueryClient();
   const { data: user } = useQuery({
     queryKey: ['me'],
     queryFn: async () => (await apiClient.get('/users/me')).data,
@@ -34,6 +36,27 @@ export default function DashboardScreen() {
     signOut().catch(() => {
       setError(t('tabs.dashboard.signOutError'));
     });
+  }
+
+  // Prefer RevenueCat's dashboard-managed remote paywall (dev build); fall back
+  // to the in-app custom paywall screen when the RevenueCatUI module is absent
+  // (Expo Go / web). Refresh the profile after a purchase/restore so the webhook
+  // -driven subscription_status is reflected.
+  async function handleGoPremium() {
+    const result = await presentRevenueCatPaywall();
+    if (result === null) {
+      router.push('/(tabs)/paywall');
+      return;
+    }
+    if (result === 'PURCHASED' || result === 'RESTORED') {
+      void queryClient.invalidateQueries({ queryKey: ['me'] });
+    }
+  }
+
+  // Opens RevenueCat's Customer Center (manage / cancel / restore).
+  async function handleManageSubscription() {
+    await presentCustomerCenter();
+    void queryClient.invalidateQueries({ queryKey: ['me'] });
   }
 
   const hasData = !!user;
@@ -106,11 +129,22 @@ export default function DashboardScreen() {
           <Button
             title={t('tabs.premium.goPremium')}
             variant="primary"
-            onPress={() => router.push('/(tabs)/paywall')}
+            onPress={handleGoPremium}
           />
           <View style={{ alignItems: 'center' }}>
             <AdBanner />
           </View>
+        </View>
+      ) : null}
+
+      {/* Premium: manage subscription via RevenueCat Customer Center */}
+      {hasData && !isFree ? (
+        <View style={{ marginTop: spacing.xl }}>
+          <Button
+            title={t('tabs.premium.manage')}
+            variant="secondary"
+            onPress={handleManageSubscription}
+          />
         </View>
       ) : null}
     </Screen>

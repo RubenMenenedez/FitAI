@@ -64,6 +64,7 @@ export const en: Record<string, string> = {
 
   // Premium upsell (dashboard)
   'tabs.premium.goPremium': 'Go Premium',
+  'tabs.premium.manage': 'Manage subscription',
 };
 
 export const es: Record<string, string> = {
@@ -129,4 +130,5 @@ export const es: Record<string, string> = {
 
   // Premium upsell (dashboard)
   'tabs.premium.goPremium': 'Hazte Premium',
+  'tabs.premium.manage': 'Gestionar suscripción',
 };

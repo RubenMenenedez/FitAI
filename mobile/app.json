@@ -27,8 +27,8 @@
       "expo-status-bar"
     ],
     "extra": {
-      "revenueCatIosKey": "",
-      "revenueCatAndroidKey": ""
+      "revenueCatIosKey": "test_gWaCbBjyiAesrVLGaPMToqTQcUM",
+      "revenueCatAndroidKey": "test_gWaCbBjyiAesrVLGaPMToqTQcUM"
     }
   }
 }

@@ -46,9 +46,11 @@ export default function PaywallScreen() {
       // RevenueCat packages are available under offering.availablePackages.
       const pkgs: any[] = offering.availablePackages ?? [];
       for (const pkg of pkgs) {
-        const id: string = pkg.product?.productIdentifier ?? pkg.identifier ?? '';
-        if (id.includes('monthly')) setMonthlyPkg(pkg);
-        if (id.includes('annual')) setAnnualPkg(pkg);
+        // Match by RevenueCat package type or product id. Products are named
+        // "monthly" / "yearly" in the dashboard.
+        const id: string = `${pkg.packageType ?? ''} ${pkg.product?.productIdentifier ?? pkg.identifier ?? ''}`.toLowerCase();
+        if (id.includes('month')) setMonthlyPkg(pkg);
+        if (id.includes('year') || id.includes('annual')) setAnnualPkg(pkg);
       }
     });
     return () => {

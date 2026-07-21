@@ -2,15 +2,15 @@ import { describe, it, expect } from 'vitest';
 import { mapRevenueCatEventToStatus, verifyWebhookAuth } from './revenueCatWebhook';
 
 describe('mapRevenueCatEventToStatus', () => {
-  it('mapea INITIAL_PURCHASE de premium_monthly a monthly', () => {
-    expect(mapRevenueCatEventToStatus({ type: 'INITIAL_PURCHASE', product_id: 'premium_monthly' })).toBe('monthly');
+  it('mapea INITIAL_PURCHASE de monthly a monthly', () => {
+    expect(mapRevenueCatEventToStatus({ type: 'INITIAL_PURCHASE', product_id: 'monthly' })).toBe('monthly');
   });
-  it('mapea RENEWAL de premium_annual a annual', () => {
-    expect(mapRevenueCatEventToStatus({ type: 'RENEWAL', product_id: 'premium_annual' })).toBe('annual');
+  it('mapea RENEWAL de yearly a annual', () => {
+    expect(mapRevenueCatEventToStatus({ type: 'RENEWAL', product_id: 'yearly' })).toBe('annual');
   });
   it('mapea CANCELLATION/EXPIRATION a free', () => {
-    expect(mapRevenueCatEventToStatus({ type: 'EXPIRATION', product_id: 'premium_monthly' })).toBe('free');
-    expect(mapRevenueCatEventToStatus({ type: 'CANCELLATION', product_id: 'premium_annual' })).toBe('free');
+    expect(mapRevenueCatEventToStatus({ type: 'EXPIRATION', product_id: 'monthly' })).toBe('free');
+    expect(mapRevenueCatEventToStatus({ type: 'CANCELLATION', product_id: 'yearly' })).toBe('free');
   });
 });
 
