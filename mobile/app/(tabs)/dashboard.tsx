@@ -1,152 +1,190 @@
-import { useState } from 'react';
-import { View } from 'react-native';
+import { View, ScrollView, Pressable } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { apiClient } from '../../src/api/client';
-import { useAuth } from '../../src/auth/AuthProvider';
 import {
-  Screen,
   AppText,
-  Button,
   Card,
-  Ring,
-  MacroRing,
+  BrandLogo,
   colors,
   spacing,
+  radius,
   fontSize,
   fontWeight,
+  BellIcon,
+  FlameIcon,
+  CameraIcon,
+  CalendarIcon,
+  CartIcon,
+  ChartIcon,
+  UsersIcon,
+  ChevronRightIcon,
 } from '../../src/ui';
-import { useT, LanguageToggle } from '../../src/i18n';
-import { AdBanner } from '../../src/ads/adsClient';
-import { presentRevenueCatPaywall, presentCustomerCenter } from '../../src/purchases/rcUi';
+import { useT } from '../../src/i18n';
 
 export default function DashboardScreen() {
-  const queryClient = useQueryClient();
+  const t = useT();
   const { data: user } = useQuery({
     queryKey: ['me'],
     queryFn: async () => (await apiClient.get('/users/me')).data,
   });
 
-  const { signOut } = useAuth();
-  const [error, setError] = useState<string | null>(null);
-  const t = useT();
+  const name = user?.name ?? user?.displayName ?? user?.email?.split('@')[0] ?? '';
+  const calTarget = Number(user?.dailyCalorieTarget ?? 0);
+  const calConsumed = Number(user?.consumedCaloriesToday ?? 0);
+  const streak = Number(user?.currentStreak ?? 0);
 
-  function handleSignOut() {
-    setError(null);
-    signOut().catch(() => {
-      setError(t('tabs.dashboard.signOutError'));
-    });
-  }
+  const macros = [
+    { key: 'protein', label: t('tabs.dashboard.protein'), consumed: Number(user?.consumedProteinG ?? 0), target: Number(user?.dailyProteinTargetG ?? 0), color: colors.protein },
+    { key: 'carbs', label: t('tabs.dashboard.carbs'), consumed: Number(user?.consumedCarbsG ?? 0), target: Number(user?.dailyCarbsTargetG ?? 0), color: colors.carbs },
+    { key: 'fat', label: t('tabs.dashboard.fat'), consumed: Number(user?.consumedFatG ?? 0), target: Number(user?.dailyFatTargetG ?? 0), color: colors.fat },
+  ];
 
-  // Prefer RevenueCat's dashboard-managed remote paywall (dev build); fall back
-  // to the in-app custom paywall screen when the RevenueCatUI module is absent
-  // (Expo Go / web). Refresh the profile after a purchase/restore so the webhook
-  // -driven subscription_status is reflected.
-  async function handleGoPremium() {
-    const result = await presentRevenueCatPaywall();
-    if (result === null) {
-      router.push('/(tabs)/paywall');
-      return;
-    }
-    if (result === 'PURCHASED' || result === 'RESTORED') {
-      void queryClient.invalidateQueries({ queryKey: ['me'] });
-    }
-  }
-
-  // Opens RevenueCat's Customer Center (manage / cancel / restore).
-  async function handleManageSubscription() {
-    await presentCustomerCenter();
-    void queryClient.invalidateQueries({ queryKey: ['me'] });
-  }
-
-  const hasData = !!user;
-  const isFree = user?.subscriptionStatus === 'free';
-  const calories = user?.dailyCalorieTarget ?? '—';
-  const proteinG = Number(user?.dailyProteinTargetG ?? 0);
-  const carbsG = Number(user?.dailyCarbsTargetG ?? 0);
-  const fatG = Number(user?.dailyFatTargetG ?? 0);
+  const calPct = calTarget > 0 ? Math.round((calConsumed / calTarget) * 100) : 0;
 
   return (
-    <Screen
-      title={t('tabs.dashboard.title')}
-      subtitle={t('tabs.dashboard.subtitle')}
-      scroll
-      headerRight={
-        <Button
-          title={t('tabs.dashboard.signOut')}
-          variant="ghost"
-          fullWidth={false}
-          size="md"
-          onPress={handleSignOut}
-        />
-      }
-    >
-      {/* Calorie goal ring */}
-      <Card style={{ alignItems: 'center', paddingVertical: spacing.xl, marginBottom: spacing.lg }}>
-        <Ring
-          size={188}
-          strokeWidth={16}
-          progress={hasData ? 1 : 0}
-          color={colors.primary}
-          center={
-            <View style={{ alignItems: 'center' }}>
-              <AppText style={{ fontSize: fontSize.display, fontWeight: fontWeight.heavy, color: colors.text }}>
-                {calories}
-              </AppText>
-              <AppText variant="small" tone="muted" weight="semibold">
-                {t('tabs.dashboard.kcalGoal')}
-              </AppText>
+    <SafeAreaView style={{ flex: 1, backgroundColor: colors.bg }} edges={['top', 'left', 'right']}>
+      <ScrollView
+        contentContainerStyle={{ padding: spacing.xl, paddingBottom: spacing.xxxl }}
+        showsVerticalScrollIndicator={false}
+      >
+        {/* Header: brand + notifications */}
+        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: spacing.lg }}>
+          <BrandLogo size={26} />
+          <Pressable hitSlop={8} accessibilityRole="button" accessibilityLabel="Notificaciones">
+            <BellIcon size={24} color={colors.text} />
+          </Pressable>
+        </View>
+
+        {/* Greeting */}
+        <AppText variant="h1" weight="heavy">{`${t('app.home.hi')}${name ? `, ${name}` : ''}! 👋`}</AppText>
+        <AppText variant="body" tone="muted" style={{ marginTop: spacing.xs, marginBottom: spacing.lg }}>
+          {t('app.home.subtitle')}
+        </AppText>
+
+        {/* Calorie card */}
+        <Card style={{ marginBottom: spacing.lg }}>
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+            <View>
+              <AppText variant="small" tone="muted" weight="semibold">{t('app.home.caloriesToday')}</AppText>
+              <View style={{ flexDirection: 'row', alignItems: 'baseline', gap: spacing.xs, marginTop: spacing.xs }}>
+                <AppText style={{ fontSize: fontSize.h1, fontWeight: fontWeight.heavy, color: colors.text }}>
+                  {calConsumed.toLocaleString()}
+                </AppText>
+                <AppText variant="small" tone="muted" weight="semibold">
+                  {`/ ${calTarget.toLocaleString()} ${t('app.home.kcal')}`}
+                </AppText>
+              </View>
             </View>
-          }
-        />
-      </Card>
-
-      {/* Macro rings */}
-      <Card style={{ marginBottom: spacing.lg }}>
-        <AppText variant="h3" weight="bold" style={{ marginBottom: spacing.lg }}>
-          {t('tabs.dashboard.macrosTitle')}
-        </AppText>
-        <View style={{ flexDirection: 'row', justifyContent: 'space-around' }}>
-          <MacroRing label={t('tabs.dashboard.protein')} value={proteinG} max={proteinG || 1} color={colors.protein} />
-          <MacroRing label={t('tabs.dashboard.carbs')} value={carbsG} max={carbsG || 1} color={colors.carbs} />
-          <MacroRing label={t('tabs.dashboard.fat')} value={fatG} max={fatG || 1} color={colors.fat} />
-        </View>
-      </Card>
-
-      {error ? (
-        <AppText tone="danger" variant="small" style={{ marginTop: spacing.sm }}>
-          {error}
-        </AppText>
-      ) : null}
-
-      <View style={{ alignItems: 'center', marginTop: spacing.lg }}>
-        <LanguageToggle />
-      </View>
-
-      {/* Free-plan: premium upsell CTA + banner ad */}
-      {isFree ? (
-        <View style={{ marginTop: spacing.xl, gap: spacing.md }}>
-          <Button
-            title={t('tabs.premium.goPremium')}
-            variant="primary"
-            onPress={handleGoPremium}
-          />
-          <View style={{ alignItems: 'center' }}>
-            <AdBanner />
+            <AppText style={{ fontSize: fontSize.h2, fontWeight: fontWeight.heavy, color: colors.primary }}>
+              {`${calPct}%`}
+            </AppText>
           </View>
-        </View>
-      ) : null}
+          <TrackBar pct={calPct / 100} color={colors.primary} style={{ marginTop: spacing.md }} />
 
-      {/* Premium: manage subscription via RevenueCat Customer Center */}
-      {hasData && !isFree ? (
-        <View style={{ marginTop: spacing.xl }}>
-          <Button
-            title={t('tabs.premium.manage')}
-            variant="secondary"
-            onPress={handleManageSubscription}
-          />
+          {/* Macros */}
+          <View style={{ flexDirection: 'row', gap: spacing.md, marginTop: spacing.lg }}>
+            {macros.map((m) => (
+              <View key={m.key} style={{ flex: 1 }}>
+                <AppText variant="tiny" tone="muted" weight="semibold">{m.label}</AppText>
+                <AppText variant="small" weight="bold" style={{ marginTop: 2 }}>
+                  {`${Math.round(m.consumed)} / ${Math.round(m.target)} g`}
+                </AppText>
+                <TrackBar pct={m.target > 0 ? m.consumed / m.target : 0} color={m.color} style={{ marginTop: spacing.xs }} height={6} />
+              </View>
+            ))}
+          </View>
+        </Card>
+
+        {/* Streak */}
+        <Card
+          onPress={() => router.push('/(tabs)/progress')}
+          style={{ marginBottom: spacing.lg, flexDirection: 'row', alignItems: 'center', gap: spacing.md }}
+        >
+          <View style={{ width: 44, height: 44, borderRadius: radius.md, backgroundColor: colors.primarySoft, alignItems: 'center', justifyContent: 'center' }}>
+            <FlameIcon size={24} color={colors.fat} />
+          </View>
+          <View style={{ flex: 1 }}>
+            <AppText variant="body" weight="bold">{`${streak} ${t('app.home.streakTitle')} 🔥`}</AppText>
+            <AppText variant="small" tone="muted">{t('app.home.streakSub')}</AppText>
+          </View>
+          <ChevronRightIcon size={22} color={colors.textFaint} />
+        </Card>
+
+        {/* Scan CTA */}
+        <Pressable
+          accessibilityRole="button"
+          onPress={() => router.push('/scan')}
+          style={({ pressed }) => ({
+            backgroundColor: pressed ? colors.primaryDark : colors.primary,
+            borderRadius: radius.xl,
+            paddingVertical: spacing.lg,
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: spacing.sm,
+            marginBottom: spacing.lg,
+          })}
+        >
+          <CameraIcon size={24} color={colors.white} />
+          <AppText style={{ color: colors.white, fontSize: fontSize.body, fontWeight: fontWeight.bold }}>
+            {t('app.home.scanCta')}
+          </AppText>
+        </Pressable>
+
+        {/* Quick actions grid */}
+        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.md }}>
+          <QuickAction label={t('app.home.quick.plan')} Icon={CalendarIcon} onPress={() => router.push('/(tabs)/planner')} />
+          <QuickAction label={t('app.home.quick.list')} Icon={CartIcon} onPress={() => router.push('/(tabs)/shopping-list')} />
+          <QuickAction label={t('app.home.quick.progress')} Icon={ChartIcon} onPress={() => router.push('/(tabs)/progress')} />
+          <QuickAction label={t('app.home.quick.community')} Icon={UsersIcon} onPress={() => router.push('/(tabs)/groups')} />
         </View>
-      ) : null}
-    </Screen>
+      </ScrollView>
+    </SafeAreaView>
+  );
+}
+
+function TrackBar({ pct, color, height = 10, style }: { pct: number; color: string; height?: number; style?: object }) {
+  const clamped = Math.max(0, Math.min(1, pct));
+  return (
+    <View style={[{ height, borderRadius: radius.pill, backgroundColor: colors.surfaceAlt, overflow: 'hidden' }, style]}>
+      <View style={{ width: `${clamped * 100}%`, height: '100%', backgroundColor: color, borderRadius: radius.pill }} />
+    </View>
+  );
+}
+
+function QuickAction({
+  label,
+  Icon,
+  onPress,
+}: {
+  label: string;
+  Icon: (p: { size?: number; color?: string }) => React.ReactNode;
+  onPress: () => void;
+}) {
+  return (
+    <Pressable
+      accessibilityRole="button"
+      onPress={onPress}
+      style={({ pressed }) => ({
+        width: '47%',
+        flexGrow: 1,
+        backgroundColor: colors.surface,
+        borderRadius: radius.lg,
+        borderWidth: 1,
+        borderColor: colors.border,
+        padding: spacing.lg,
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: spacing.md,
+        opacity: pressed ? 0.85 : 1,
+      })}
+    >
+      <View style={{ width: 36, height: 36, borderRadius: radius.md, backgroundColor: colors.primarySoft, alignItems: 'center', justifyContent: 'center' }}>
+        {Icon({ size: 20, color: colors.primary })}
+      </View>
+      <AppText variant="small" weight="semibold" style={{ flex: 1 }}>{label}</AppText>
+    </Pressable>
   );
 }

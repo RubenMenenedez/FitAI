@@ -1,36 +1,32 @@
 import { Tabs } from 'expo-router/js-tabs';
-import { colors } from '../../src/theme';
+import { FitTabBar } from '../../src/ui/TabBar';
 import { useT } from '../../src/i18n';
 
 export default function TabsLayout() {
   const t = useT();
 
+  // Route name → localized label for the custom bar.
+  const labels: Record<string, string> = {
+    dashboard: t('tabs.nav.home'),
+    planner: t('tabs.nav.plan'),
+    progress: t('tabs.nav.progress'),
+    profile: t('tabs.nav.profile'),
+  };
+
   return (
     <Tabs
-      screenOptions={{
-        headerShown: false,
-        tabBarActiveTintColor: colors.primary,
-        tabBarInactiveTintColor: colors.textFaint,
-        tabBarStyle: {
-          backgroundColor: colors.surface,
-          borderTopColor: colors.border,
-          borderTopWidth: 1,
-          height: 64,
-          paddingBottom: 8,
-          paddingTop: 8,
-        },
-        tabBarLabelStyle: {
-          fontSize: 11,
-          fontWeight: '600',
-        },
-      }}
+      screenOptions={{ headerShown: false }}
+      tabBar={(props) => <FitTabBar {...props} labels={labels} />}
     >
-      <Tabs.Screen name="dashboard" options={{ title: t('tabs.nav.today'), tabBarLabel: t('tabs.nav.today') }} />
-      <Tabs.Screen name="planner" options={{ title: t('tabs.nav.plan'), tabBarLabel: t('tabs.nav.plan') }} />
-      <Tabs.Screen name="progress" options={{ title: t('tabs.nav.progress'), tabBarLabel: t('tabs.nav.progress') }} />
-      <Tabs.Screen name="goals" options={{ title: t('tabs.nav.goals'), tabBarLabel: t('tabs.nav.goals') }} />
-      <Tabs.Screen name="groups" options={{ title: t('tabs.nav.groups'), tabBarLabel: t('tabs.nav.groups') }} />
-      <Tabs.Screen name="progress-photos" options={{ title: t('tabs.nav.photos'), tabBarLabel: t('tabs.nav.photos') }} />
+      <Tabs.Screen name="dashboard" />
+      <Tabs.Screen name="planner" />
+      <Tabs.Screen name="progress" />
+      <Tabs.Screen name="profile" />
+
+      {/* Secondary destinations — reachable from within screens, not the bar. */}
+      <Tabs.Screen name="goals" options={{ href: null }} />
+      <Tabs.Screen name="groups" options={{ href: null }} />
+      <Tabs.Screen name="progress-photos" options={{ href: null }} />
       <Tabs.Screen name="shopping-list" options={{ href: null }} />
       <Tabs.Screen name="paywall" options={{ href: null }} />
     </Tabs>

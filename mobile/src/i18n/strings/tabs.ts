@@ -3,9 +3,11 @@
 
 export const en: Record<string, string> = {
   // Tab bar navigation labels
+  'tabs.nav.home': 'Home',
   'tabs.nav.today': 'Today',
   'tabs.nav.plan': 'Plan',
   'tabs.nav.progress': 'Progress',
+  'tabs.nav.profile': 'Profile',
   'tabs.nav.goals': 'Goals',
   'tabs.nav.groups': 'Groups',
   'tabs.nav.photos': 'Photos',
@@ -69,9 +71,11 @@ export const en: Record<string, string> = {
 
 export const es: Record<string, string> = {
   // Tab bar navigation labels
+  'tabs.nav.home': 'Inicio',
   'tabs.nav.today': 'Hoy',
   'tabs.nav.plan': 'Plan',
   'tabs.nav.progress': 'Progreso',
+  'tabs.nav.profile': 'Perfil',
   'tabs.nav.goals': 'Objetivos',
   'tabs.nav.groups': 'Grupos',
   'tabs.nav.photos': 'Fotos',

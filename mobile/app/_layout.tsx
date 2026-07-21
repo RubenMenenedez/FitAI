@@ -65,6 +65,7 @@ function RootNavigation() {
 
       <Stack.Protected guard={isOnboarded}>
         <Stack.Screen name="(tabs)" />
+        <Stack.Screen name="scan" options={{ presentation: 'modal' }} />
       </Stack.Protected>
     </Stack>
   );

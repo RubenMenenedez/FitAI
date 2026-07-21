@@ -17,7 +17,7 @@ export interface ButtonProps extends Omit<PressableProps, 'children' | 'style'> 
 }
 
 const BG: Record<Variant, string> = {
-  primary: colors.ink,
+  primary: colors.primary,
   success: colors.success,
   secondary: colors.surface,
   ghost: 'transparent',
@@ -25,7 +25,7 @@ const BG: Record<Variant, string> = {
 };
 
 const BG_PRESSED: Record<Variant, string> = {
-  primary: colors.inkPressed,
+  primary: colors.primaryDark,
   success: colors.successDark,
   secondary: colors.surfaceAlt,
   ghost: colors.surfaceAlt,
@@ -114,9 +114,9 @@ export function Chip({
         paddingHorizontal: spacing.lg,
         paddingVertical: spacing.md,
         borderRadius: radius.pill,
-        backgroundColor: active ? colors.ink : colors.surfaceAlt,
+        backgroundColor: active ? colors.primary : colors.surfaceAlt,
         borderWidth: 1.5,
-        borderColor: active ? colors.ink : 'transparent',
+        borderColor: active ? colors.primary : 'transparent',
         opacity: pressed ? 0.7 : 1,
       })}
     >

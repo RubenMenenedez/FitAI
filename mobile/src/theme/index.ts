@@ -1,26 +1,27 @@
-// FitAI design system — clean, minimal, high-contrast (Cal AI-inspired, not identical).
-// Black "ink" chrome + white cards + sparing color accents for data viz (macro
-// rings, streak orange, positive green). Consumed by src/ui and every screen.
+// Fit AI design system — clean, modern, blue-accented (matches the Fit AI mockup).
+// Vivid blue is the primary brand color: buttons, camera FAB, active nav, links,
+// progress. White cards on a light-gray canvas with soft shadows. Consumed by
+// src/ui and every screen.
 
 export const colors = {
-  // Chrome — near-black ink for primary buttons / FABs / strong text.
+  // Near-black ink for strong text / dark chrome.
   ink: '#0F0F12',
   inkPressed: '#26262B',
 
-  // Brand accent (used sparingly: calorie ring, streak, highlights, active nav).
-  primary: '#FF7A1A',
-  primaryDark: '#E86A0C',
-  primarySoft: '#FFF2E8',
+  // Brand primary — vivid blue (buttons, FAB, active nav, links, progress).
+  primary: '#2E6BF6',
+  primaryDark: '#1F55D6',
+  primarySoft: '#EAF1FF',
 
-  // Positive / success (trends up, confirmations).
-  success: '#16C47F',
-  successDark: '#0FA968',
-  successSoft: '#E4F8EF',
+  // Positive / success (trends up, confirmations, calorie progress).
+  success: '#22C55E',
+  successDark: '#16A34A',
+  successSoft: '#E7F8EE',
 
-  // Macro accents (protein / carbs / fat rings, matching the reference look).
-  protein: '#FF4D6D',
-  carbs: '#FF8A3D',
-  fat: '#3E7BFA',
+  // Macro accents (protein green / carbs blue / fat amber — matching the mockup).
+  protein: '#22C55E',
+  carbs: '#3B82F6',
+  fat: '#F59E0B',
 
   // Neutrals.
   bg: '#F4F4F5', // app background (slightly off-white so white cards pop)

@@ -7,4 +7,7 @@ export { Stat, ProgressBar, EmptyState } from './Data';
 export { Ring, MacroRing } from './Ring';
 export { Segmented } from './Segmented';
 export { GoogleLogo } from './GoogleLogo';
+export { BrandLogo, BrandMark } from './BrandLogo';
+export { LineChart } from './LineChart';
+export * from './icons';
 export { theme, colors, spacing, radius, fontSize, fontWeight, shadow } from '../theme';
