@@ -3,9 +3,11 @@ import { Link, router } from 'expo-router';
 import { View } from 'react-native';
 import { useAuth } from '../../src/auth/AuthProvider';
 import { Screen, Field, Button, AppText, GoogleLogo, colors, spacing } from '../../src/ui';
+import { useT, LanguageToggle } from '../../src/i18n';
 
 export default function SignupScreen() {
   const { signUp, signInWithGoogle } = useAuth();
+  const t = useT();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -27,7 +29,7 @@ export default function SignupScreen() {
       // A network-level failure (no connectivity, DNS, timeout, ...) throws
       // instead of resolving to { error }, unlike Better Auth's own
       // application errors.
-      setError('No se pudo conectar. Revisa tu conexión e inténtalo de nuevo.');
+      setError(t('common.connectionError'));
     } finally {
       setIsSubmitting(false);
     }
@@ -50,10 +52,11 @@ export default function SignupScreen() {
 
   return (
     <Screen
-      title="Crear cuenta"
-      subtitle="Empieza tu experiencia FitAI"
+      title={t('auth.signup.title')}
+      subtitle={t('auth.signup.subtitle')}
       keyboard
       scroll
+      headerRight={<LanguageToggle />}
     >
       {error ? (
         <AppText tone="danger" style={{ marginBottom: spacing.md }}>
@@ -62,8 +65,8 @@ export default function SignupScreen() {
       ) : null}
 
       <Field
-        label="Nombre"
-        placeholder="Nombre"
+        label={t('auth.signup.nameLabel')}
+        placeholder={t('auth.signup.namePlaceholder')}
         autoCapitalize="words"
         autoComplete="name"
         value={name}
@@ -79,8 +82,8 @@ export default function SignupScreen() {
         onChangeText={setEmail}
       />
       <Field
-        label="Contraseña"
-        placeholder="Contraseña"
+        label={t('auth.signup.passwordLabel')}
+        placeholder={t('auth.signup.passwordPlaceholder')}
         secureTextEntry
         autoCapitalize="none"
         autoComplete="password-new"
@@ -89,7 +92,7 @@ export default function SignupScreen() {
       />
 
       <Button
-        title="Crear cuenta"
+        title={t('auth.signup.submitButton')}
         onPress={handleSubmit}
         loading={isSubmitting}
         fullWidth
@@ -97,12 +100,12 @@ export default function SignupScreen() {
 
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.md, marginVertical: spacing.xl }}>
         <View style={{ flex: 1, height: 1, backgroundColor: colors.border }} />
-        <AppText variant="small" tone="faint" weight="semibold">o</AppText>
+        <AppText variant="small" tone="faint" weight="semibold">{t('auth.signup.orDivider')}</AppText>
         <View style={{ flex: 1, height: 1, backgroundColor: colors.border }} />
       </View>
 
       <Button
-        title="Continuar con Google"
+        title={t('auth.signup.googleButton')}
         variant="secondary"
         onPress={handleGoogle}
         loading={isGoogleLoading}
@@ -112,7 +115,7 @@ export default function SignupScreen() {
 
       <View style={{ alignItems: 'center', marginTop: spacing.xl }}>
         <Link href="/(auth)/login">
-          <AppText tone="primary">¿Ya tienes cuenta? Inicia sesión</AppText>
+          <AppText tone="primary">{t('auth.signup.hasAccount')}</AppText>
         </Link>
       </View>
     </Screen>

@@ -5,17 +5,21 @@ import { useOnboardingStore } from '../../src/state/onboardingStore';
 import { apiClient } from '../../src/api/client';
 import { ME_QUERY_KEY } from '../../src/hooks/useOnboardingStatus';
 import { Screen, Button, AppText, spacing } from '../../src/ui';
+import { useT } from '../../src/i18n';
 
-const MEAL_OPTIONS = [
-  { value: '3', label: '3 comidas (desayuno, comida, cena)' },
-  { value: '5_6', label: '5-6 comidas (con snacks)' },
-] as const;
+const MEAL_VALUES = ['3', '5_6'] as const;
 
 export default function MealsPerDayScreen() {
   const { data, setData } = useOnboardingStore();
   const queryClient = useQueryClient();
+  const t = useT();
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const MEAL_OPTIONS: { value: (typeof MEAL_VALUES)[number]; label: string }[] = [
+    { value: '3', label: t('auth.mealsPerDay.3meals') },
+    { value: '5_6', label: t('auth.mealsPerDay.56meals') },
+  ];
 
   function handleFinish(mealsPerDay: '3' | '5_6') {
     if (isSubmitting) return;
@@ -33,7 +37,7 @@ export default function MealsPerDayScreen() {
       !payload.activityLevel ||
       !payload.goal
     ) {
-      setError('Faltan datos. Vuelve atrás y completa los pasos anteriores.');
+      setError(t('auth.mealsPerDay.errorMissingData'));
       return;
     }
 
@@ -51,7 +55,7 @@ export default function MealsPerDayScreen() {
         void queryClient.invalidateQueries({ queryKey: ME_QUERY_KEY });
       })
       .catch(() => {
-        setError('No se pudo guardar. Revisa tu conexión e inténtalo de nuevo.');
+        setError(t('common.connectionError'));
       })
       .finally(() => {
         setIsSubmitting(false);
@@ -60,8 +64,8 @@ export default function MealsPerDayScreen() {
 
   return (
     <Screen
-      title="¿Cuántas comidas al día prefieres?"
-      subtitle="Adaptaremos tu plan a tu rutina"
+      title={t('auth.mealsPerDay.title')}
+      subtitle={t('auth.mealsPerDay.subtitle')}
     >
       {error ? (
         <AppText tone="danger" style={{ marginBottom: spacing.md }}>

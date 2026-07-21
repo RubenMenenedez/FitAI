@@ -3,33 +3,38 @@ import { router } from 'expo-router';
 import { View } from 'react-native';
 import { useOnboardingStore } from '../../src/state/onboardingStore';
 import { Screen, Button, Chip, AppText, spacing } from '../../src/ui';
+import { useT } from '../../src/i18n';
 
-const ACTIVITY_OPTIONS = [
-  { value: 'sedentary', label: 'Sedentario' },
-  { value: 'light', label: 'Ligero' },
-  { value: 'moderate', label: 'Moderado' },
-  { value: 'active', label: 'Activo' },
-  { value: 'very_active', label: 'Muy activo' },
-] as const;
-
-const GOAL_OPTIONS = [
-  { value: 'lose_fat', label: 'Bajar grasa' },
-  { value: 'maintain', label: 'Mantener' },
-  { value: 'gain_muscle', label: 'Ganar músculo' },
-] as const;
+const ACTIVITY_VALUES = ['sedentary', 'light', 'moderate', 'active', 'very_active'] as const;
+const GOAL_VALUES = ['lose_fat', 'maintain', 'gain_muscle'] as const;
 
 export default function ActivityGoalScreen() {
   const { data, setData } = useOnboardingStore();
+  const t = useT();
   const [error, setError] = useState<string | null>(null);
+
+  const ACTIVITY_OPTIONS: { value: (typeof ACTIVITY_VALUES)[number]; label: string }[] = [
+    { value: 'sedentary', label: t('auth.activityGoal.sedentary') },
+    { value: 'light', label: t('auth.activityGoal.light') },
+    { value: 'moderate', label: t('auth.activityGoal.moderate') },
+    { value: 'active', label: t('auth.activityGoal.active') },
+    { value: 'very_active', label: t('auth.activityGoal.veryActive') },
+  ];
+
+  const GOAL_OPTIONS: { value: (typeof GOAL_VALUES)[number]; label: string }[] = [
+    { value: 'lose_fat', label: t('auth.activityGoal.loseFat') },
+    { value: 'maintain', label: t('auth.activityGoal.maintain') },
+    { value: 'gain_muscle', label: t('auth.activityGoal.gainMuscle') },
+  ];
 
   function handleNext() {
     setError(null);
     if (!data.activityLevel) {
-      setError('Selecciona tu nivel de actividad.');
+      setError(t('auth.activityGoal.errorActivity'));
       return;
     }
     if (!data.goal) {
-      setError('Selecciona tu objetivo.');
+      setError(t('auth.activityGoal.errorGoal'));
       return;
     }
     router.push('/(onboarding)/meals-per-day');
@@ -37,8 +42,8 @@ export default function ActivityGoalScreen() {
 
   return (
     <Screen
-      title="Actividad y objetivo"
-      subtitle="Personaliza tu plan de nutrición"
+      title={t('auth.activityGoal.title')}
+      subtitle={t('auth.activityGoal.subtitle')}
       scroll
     >
       {error ? (
@@ -48,7 +53,7 @@ export default function ActivityGoalScreen() {
       ) : null}
 
       <AppText variant="small" weight="semibold" tone="muted" style={{ marginBottom: spacing.sm }}>
-        Nivel de actividad
+        {t('auth.activityGoal.activityLabel')}
       </AppText>
       <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm, marginBottom: spacing.xl }}>
         {ACTIVITY_OPTIONS.map((opt) => (
@@ -62,7 +67,7 @@ export default function ActivityGoalScreen() {
       </View>
 
       <AppText variant="small" weight="semibold" tone="muted" style={{ marginBottom: spacing.sm }}>
-        Objetivo
+        {t('auth.activityGoal.goalLabel')}
       </AppText>
       <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm, marginBottom: spacing.xl }}>
         {GOAL_OPTIONS.map((opt) => (
@@ -76,7 +81,7 @@ export default function ActivityGoalScreen() {
       </View>
 
       <Button
-        title="Siguiente"
+        title={t('auth.activityGoal.nextButton')}
         onPress={handleNext}
         fullWidth
       />

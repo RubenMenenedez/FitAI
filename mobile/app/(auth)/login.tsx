@@ -3,9 +3,11 @@ import { Link, router } from 'expo-router';
 import { View } from 'react-native';
 import { useAuth } from '../../src/auth/AuthProvider';
 import { Screen, Field, Button, AppText, GoogleLogo, colors, spacing } from '../../src/ui';
+import { useT, LanguageToggle } from '../../src/i18n';
 
 export default function LoginScreen() {
   const { signIn, signInWithGoogle } = useAuth();
+  const t = useT();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
@@ -26,7 +28,7 @@ export default function LoginScreen() {
       // A network-level failure (no connectivity, DNS, timeout, ...) throws
       // instead of resolving to { error }, unlike Better Auth's own
       // application errors.
-      setError('No se pudo conectar. Revisa tu conexión e inténtalo de nuevo.');
+      setError(t('common.connectionError'));
     } finally {
       setIsSubmitting(false);
     }
@@ -51,10 +53,11 @@ export default function LoginScreen() {
 
   return (
     <Screen
-      title="Iniciar sesión"
-      subtitle="Bienvenido de nuevo"
+      title={t('auth.login.title')}
+      subtitle={t('auth.login.subtitle')}
       keyboard
       scroll
+      headerRight={<LanguageToggle />}
     >
       {error ? (
         <AppText tone="danger" style={{ marginBottom: spacing.md }}>
@@ -72,8 +75,8 @@ export default function LoginScreen() {
         onChangeText={setEmail}
       />
       <Field
-        label="Contraseña"
-        placeholder="Contraseña"
+        label={t('auth.login.passwordLabel')}
+        placeholder={t('auth.login.passwordPlaceholder')}
         secureTextEntry
         autoCapitalize="none"
         autoComplete="password"
@@ -82,7 +85,7 @@ export default function LoginScreen() {
       />
 
       <Button
-        title="Entrar"
+        title={t('auth.login.submitButton')}
         onPress={handleSubmit}
         loading={isSubmitting}
         fullWidth
@@ -90,12 +93,12 @@ export default function LoginScreen() {
 
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.md, marginVertical: spacing.xl }}>
         <View style={{ flex: 1, height: 1, backgroundColor: colors.border }} />
-        <AppText variant="small" tone="faint" weight="semibold">o</AppText>
+        <AppText variant="small" tone="faint" weight="semibold">{t('auth.login.orDivider')}</AppText>
         <View style={{ flex: 1, height: 1, backgroundColor: colors.border }} />
       </View>
 
       <Button
-        title="Continuar con Google"
+        title={t('auth.login.googleButton')}
         variant="secondary"
         onPress={handleGoogle}
         loading={isGoogleLoading}
@@ -105,7 +108,7 @@ export default function LoginScreen() {
 
       <View style={{ alignItems: 'center', marginTop: spacing.xl }}>
         <Link href="/(auth)/signup">
-          <AppText tone="primary">¿No tienes cuenta? Regístrate</AppText>
+          <AppText tone="primary">{t('auth.login.noAccount')}</AppText>
         </Link>
       </View>
     </Screen>

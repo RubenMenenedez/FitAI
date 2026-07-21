@@ -1,0 +1,135 @@
+// Strings for the auth + onboarding screens (login, signup, personal-data,
+// activity-goal, meals-per-day). Owned by the auth screen group.
+// `en` = default/source, `es` = Spanish. Filled during the i18n migration.
+
+export const en: Record<string, string> = {
+  // login
+  'auth.login.title': 'Sign in',
+  'auth.login.subtitle': 'Welcome back',
+  'auth.login.passwordLabel': 'Password',
+  'auth.login.passwordPlaceholder': 'Password',
+  'auth.login.submitButton': 'Sign in',
+  'auth.login.orDivider': 'or',
+  'auth.login.googleButton': 'Continue with Google',
+  'auth.login.noAccount': "Don't have an account? Sign up",
+
+  // signup
+  'auth.signup.title': 'Create account',
+  'auth.signup.subtitle': 'Start your FitAI experience',
+  'auth.signup.nameLabel': 'Name',
+  'auth.signup.namePlaceholder': 'Name',
+  'auth.signup.passwordLabel': 'Password',
+  'auth.signup.passwordPlaceholder': 'Password',
+  'auth.signup.submitButton': 'Create account',
+  'auth.signup.orDivider': 'or',
+  'auth.signup.googleButton': 'Continue with Google',
+  'auth.signup.hasAccount': 'Already have an account? Sign in',
+
+  // personal-data
+  'auth.personalData.title': 'Your data',
+  'auth.personalData.subtitle': 'We need to get to know you a little better',
+  'auth.personalData.sexLabel': 'Sex',
+  'auth.personalData.sexMale': 'Male',
+  'auth.personalData.sexFemale': 'Female',
+  'auth.personalData.birthDateLabel': 'Date of birth',
+  'auth.personalData.birthDatePlaceholder': 'YYYY-MM-DD',
+  'auth.personalData.heightLabel': 'Height (cm)',
+  'auth.personalData.heightPlaceholder': 'Height (cm)',
+  'auth.personalData.weightLabel': 'Weight (kg)',
+  'auth.personalData.weightPlaceholder': 'Weight (kg)',
+  'auth.personalData.nextButton': 'Next',
+  'auth.personalData.errorSex': 'Please select your sex.',
+  'auth.personalData.errorBirthDate': 'Enter a valid date of birth (YYYY-MM-DD).',
+  'auth.personalData.errorHeight': 'Enter a valid height in cm.',
+  'auth.personalData.errorWeight': 'Enter a valid weight in kg.',
+
+  // activity-goal
+  'auth.activityGoal.title': 'Activity & goal',
+  'auth.activityGoal.subtitle': 'Customise your nutrition plan',
+  'auth.activityGoal.activityLabel': 'Activity level',
+  'auth.activityGoal.goalLabel': 'Goal',
+  'auth.activityGoal.nextButton': 'Next',
+  'auth.activityGoal.errorActivity': 'Please select your activity level.',
+  'auth.activityGoal.errorGoal': 'Please select your goal.',
+  'auth.activityGoal.sedentary': 'Sedentary',
+  'auth.activityGoal.light': 'Light',
+  'auth.activityGoal.moderate': 'Moderate',
+  'auth.activityGoal.active': 'Active',
+  'auth.activityGoal.veryActive': 'Very active',
+  'auth.activityGoal.loseFat': 'Lose fat',
+  'auth.activityGoal.maintain': 'Maintain',
+  'auth.activityGoal.gainMuscle': 'Gain muscle',
+
+  // meals-per-day
+  'auth.mealsPerDay.title': 'How many meals a day do you prefer?',
+  'auth.mealsPerDay.subtitle': 'We will adapt your plan to your routine',
+  'auth.mealsPerDay.3meals': '3 meals (breakfast, lunch, dinner)',
+  'auth.mealsPerDay.56meals': '5-6 meals (with snacks)',
+  'auth.mealsPerDay.errorMissingData': 'Missing data. Go back and complete the previous steps.',
+};
+
+export const es: Record<string, string> = {
+  // login
+  'auth.login.title': 'Iniciar sesión',
+  'auth.login.subtitle': 'Bienvenido de nuevo',
+  'auth.login.passwordLabel': 'Contraseña',
+  'auth.login.passwordPlaceholder': 'Contraseña',
+  'auth.login.submitButton': 'Entrar',
+  'auth.login.orDivider': 'o',
+  'auth.login.googleButton': 'Continuar con Google',
+  'auth.login.noAccount': '¿No tienes cuenta? Regístrate',
+
+  // signup
+  'auth.signup.title': 'Crear cuenta',
+  'auth.signup.subtitle': 'Empieza tu experiencia FitAI',
+  'auth.signup.nameLabel': 'Nombre',
+  'auth.signup.namePlaceholder': 'Nombre',
+  'auth.signup.passwordLabel': 'Contraseña',
+  'auth.signup.passwordPlaceholder': 'Contraseña',
+  'auth.signup.submitButton': 'Crear cuenta',
+  'auth.signup.orDivider': 'o',
+  'auth.signup.googleButton': 'Continuar con Google',
+  'auth.signup.hasAccount': '¿Ya tienes cuenta? Inicia sesión',
+
+  // personal-data
+  'auth.personalData.title': 'Tus datos',
+  'auth.personalData.subtitle': 'Necesitamos conocerte un poco mejor',
+  'auth.personalData.sexLabel': 'Sexo',
+  'auth.personalData.sexMale': 'Hombre',
+  'auth.personalData.sexFemale': 'Mujer',
+  'auth.personalData.birthDateLabel': 'Fecha de nacimiento',
+  'auth.personalData.birthDatePlaceholder': 'AAAA-MM-DD',
+  'auth.personalData.heightLabel': 'Altura (cm)',
+  'auth.personalData.heightPlaceholder': 'Altura (cm)',
+  'auth.personalData.weightLabel': 'Peso (kg)',
+  'auth.personalData.weightPlaceholder': 'Peso (kg)',
+  'auth.personalData.nextButton': 'Siguiente',
+  'auth.personalData.errorSex': 'Selecciona tu sexo.',
+  'auth.personalData.errorBirthDate': 'Introduce una fecha de nacimiento válida (AAAA-MM-DD).',
+  'auth.personalData.errorHeight': 'Introduce una altura válida en cm.',
+  'auth.personalData.errorWeight': 'Introduce un peso válido en kg.',
+
+  // activity-goal
+  'auth.activityGoal.title': 'Actividad y objetivo',
+  'auth.activityGoal.subtitle': 'Personaliza tu plan de nutrición',
+  'auth.activityGoal.activityLabel': 'Nivel de actividad',
+  'auth.activityGoal.goalLabel': 'Objetivo',
+  'auth.activityGoal.nextButton': 'Siguiente',
+  'auth.activityGoal.errorActivity': 'Selecciona tu nivel de actividad.',
+  'auth.activityGoal.errorGoal': 'Selecciona tu objetivo.',
+  'auth.activityGoal.sedentary': 'Sedentario',
+  'auth.activityGoal.light': 'Ligero',
+  'auth.activityGoal.moderate': 'Moderado',
+  'auth.activityGoal.active': 'Activo',
+  'auth.activityGoal.veryActive': 'Muy activo',
+  'auth.activityGoal.loseFat': 'Bajar grasa',
+  'auth.activityGoal.maintain': 'Mantener',
+  'auth.activityGoal.gainMuscle': 'Ganar músculo',
+
+  // meals-per-day
+  'auth.mealsPerDay.title': '¿Cuántas comidas al día prefieres?',
+  'auth.mealsPerDay.subtitle': 'Adaptaremos tu plan a tu rutina',
+  'auth.mealsPerDay.3meals': '3 comidas (desayuno, comida, cena)',
+  'auth.mealsPerDay.56meals': '5-6 comidas (con snacks)',
+  'auth.mealsPerDay.errorMissingData': 'Faltan datos. Vuelve atrás y completa los pasos anteriores.',
+};
