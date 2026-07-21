@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { View, Text, TextInput, Pressable, FlatList } from 'react-native';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { apiClient } from '../../src/api/client';
+import { requestHealthPermissionsAndSync } from '../../src/health/healthSync';
 
 type WeighIn = {
   id: string;
@@ -30,6 +31,7 @@ export default function ProgressScreen() {
       <Text style={{ fontSize: 22, fontWeight: '700' }}>Progreso</Text>
       <TextInput placeholder="Peso (kg)" keyboardType="numeric" value={weightKg} onChangeText={setWeightKg} />
       <Pressable onPress={() => recordWeighIn.mutate()}><Text>Registrar pesaje</Text></Pressable>
+      <Pressable onPress={async () => { try { await requestHealthPermissionsAndSync(); queryClient.invalidateQueries({ queryKey: ['weigh-ins'] }); } catch { /* native module absent in Expo Go — expected */ } }}><Text>Sincronizar con Salud</Text></Pressable>
       <FlatList
         data={weighIns ?? []}
         keyExtractor={(w) => w.id}
