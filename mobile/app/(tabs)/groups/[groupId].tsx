@@ -3,10 +3,12 @@ import { useLocalSearchParams } from 'expo-router';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiClient } from '../../../src/api/client';
 import { Screen, Card, AppText, Chip, EmptyState, spacing } from '../../../src/ui';
+import { useT } from '../../../src/i18n';
 
 const EMOJIS = ['🔥', '💪', '👏', '🎉', '❤️'];
 
 export default function GroupFeedScreen() {
+  const t = useT();
   const { groupId } = useLocalSearchParams<{ groupId: string }>();
   const queryClient = useQueryClient();
   const { data: posts } = useQuery({ queryKey: ['group-posts', groupId], queryFn: async () => (await apiClient.get(`/groups/${groupId}/posts`)).data });
@@ -17,15 +19,15 @@ export default function GroupFeedScreen() {
   });
 
   return (
-    <Screen title="Grupo">
+    <Screen title={t('social.groups.feed.title')}>
       <FlatList
         data={posts ?? []}
         keyExtractor={(p: any) => p.id}
         contentContainerStyle={{ gap: spacing.md }}
         ListEmptyComponent={
           <EmptyState
-            title="Sé el primero en publicar"
-            message="Aún no hay publicaciones en este grupo. ¡Anímate!"
+            title={t('social.groups.feed.emptyTitle')}
+            message={t('social.groups.feed.emptyMessage')}
           />
         }
         renderItem={({ item }: any) => (

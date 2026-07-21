@@ -3,16 +3,18 @@ import { router } from 'expo-router';
 import { useQuery } from '@tanstack/react-query';
 import { apiClient } from '../../../src/api/client';
 import { Screen, Card, AppText, Button, EmptyState, spacing } from '../../../src/ui';
+import { useT } from '../../../src/i18n';
 
 export default function GroupsListScreen() {
+  const t = useT();
   const { data: publicGroups } = useQuery({ queryKey: ['public-groups'], queryFn: async () => (await apiClient.get('/groups/public')).data });
 
   return (
     <Screen
-      title="Grupos"
+      title={t('social.groups.title')}
       headerRight={
         <Button
-          title="Crear"
+          title={t('social.groups.createButton')}
           size="md"
           variant="success"
           fullWidth={false}
@@ -21,7 +23,7 @@ export default function GroupsListScreen() {
       }
     >
       <AppText variant="small" weight="semibold" tone="muted" style={{ marginBottom: spacing.md }}>
-        Grupos públicos
+        {t('social.groups.publicLabel')}
       </AppText>
       <FlatList
         data={publicGroups ?? []}
@@ -29,8 +31,8 @@ export default function GroupsListScreen() {
         contentContainerStyle={{ gap: spacing.md }}
         ListEmptyComponent={
           <EmptyState
-            title="Sin grupos públicos"
-            message="Crea el primero o espera a que otros usuarios compartan el suyo."
+            title={t('social.groups.emptyTitle')}
+            message={t('social.groups.emptyMessage')}
           />
         }
         renderItem={({ item }: any) => (

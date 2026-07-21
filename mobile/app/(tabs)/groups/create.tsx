@@ -4,8 +4,10 @@ import { router } from 'expo-router';
 import { useMutation } from '@tanstack/react-query';
 import { apiClient } from '../../../src/api/client';
 import { Screen, Field, Chip, Button, AppText, spacing } from '../../../src/ui';
+import { useT } from '../../../src/i18n';
 
 export default function CreateGroupScreen() {
+  const t = useT();
   const [name, setName] = useState('');
   const [visibility, setVisibility] = useState<'private' | 'public'>('private');
   const create = useMutation({
@@ -14,32 +16,32 @@ export default function CreateGroupScreen() {
   });
 
   return (
-    <Screen title="Crear grupo" keyboard scroll>
+    <Screen title={t('social.groups.create.title')} keyboard scroll>
       <Field
-        label="Nombre del grupo"
-        placeholder="Nombre del grupo"
+        label={t('social.groups.create.nameLabel')}
+        placeholder={t('social.groups.create.namePlaceholder')}
         value={name}
         onChangeText={setName}
       />
 
       <AppText variant="small" weight="semibold" tone="muted" style={{ marginBottom: spacing.sm }}>
-        Visibilidad
+        {t('social.groups.create.visibilityLabel')}
       </AppText>
       <View style={{ flexDirection: 'row', gap: spacing.sm, marginBottom: spacing.xl }}>
         <Chip
-          label="Privado"
+          label={t('social.groups.create.private')}
           active={visibility === 'private'}
           onPress={() => setVisibility('private')}
         />
         <Chip
-          label="Público"
+          label={t('social.groups.create.public')}
           active={visibility === 'public'}
           onPress={() => setVisibility('public')}
         />
       </View>
 
       <Button
-        title="Crear"
+        title={t('social.groups.create.createButton')}
         variant="success"
         loading={create.isPending}
         onPress={() => create.mutate()}

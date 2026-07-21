@@ -4,6 +4,7 @@ import { File } from 'expo-file-system';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiClient } from '../../src/api/client';
 import { Screen, Button, EmptyState, spacing, radius } from '../../src/ui';
+import { useT } from '../../src/i18n';
 
 type ProgressPhoto = {
   id: string;
@@ -13,6 +14,7 @@ type ProgressPhoto = {
 };
 
 export default function ProgressPhotosScreen() {
+  const t = useT();
   const queryClient = useQueryClient();
   const { data: photos } = useQuery<ProgressPhoto[]>({
     queryKey: ['progress-photos'],
@@ -37,19 +39,19 @@ export default function ProgressPhotosScreen() {
 
   function confirmAndUpload() {
     Alert.alert(
-      'Guardar foto de progreso',
-      'Esta foto se almacenará de forma persistente para que puedas comparar tu progreso en el tiempo. ¿Confirmas?',
-      [{ text: 'Cancelar', style: 'cancel' }, { text: 'Guardar', onPress: () => upload.mutate() }],
+      t('social.photos.confirmTitle'),
+      t('social.photos.confirmMessage'),
+      [{ text: t('social.photos.confirmCancel'), style: 'cancel' }, { text: t('social.photos.confirmSave'), onPress: () => upload.mutate() }],
     );
   }
 
   return (
     <Screen
-      title="Fotos de progreso"
-      subtitle="Lleva un registro visual de tu transformación"
+      title={t('social.photos.title')}
+      subtitle={t('social.photos.subtitle')}
     >
       <Button
-        title="Añadir foto de progreso"
+        title={t('social.photos.addButton')}
         variant="success"
         loading={upload.isPending}
         onPress={confirmAndUpload}
@@ -63,8 +65,8 @@ export default function ProgressPhotosScreen() {
         contentContainerStyle={{ gap: spacing.sm }}
         ListEmptyComponent={
           <EmptyState
-            title="Sin fotos aún"
-            message="Añade tu primera foto de progreso para empezar a comparar tu transformación."
+            title={t('social.photos.emptyTitle')}
+            message={t('social.photos.emptyMessage')}
           />
         }
         renderItem={({ item }: { item: ProgressPhoto }) => (

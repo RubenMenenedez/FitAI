@@ -3,8 +3,10 @@ import { useLocalSearchParams } from 'expo-router';
 import { useQuery } from '@tanstack/react-query';
 import { apiClient } from '../../src/api/client';
 import { Screen, Card, AppText, EmptyState, spacing } from '../../src/ui';
+import { useT } from '../../src/i18n';
 
 export default function ShoppingListScreen() {
+  const t = useT();
   const { mealPlanId } = useLocalSearchParams<{ mealPlanId: string }>();
   const { data } = useQuery({
     queryKey: ['shopping-list', mealPlanId],
@@ -13,15 +15,15 @@ export default function ShoppingListScreen() {
   });
 
   return (
-    <Screen title="Lista de compra">
+    <Screen title={t('social.shopping.title')}>
       <FlatList
         data={data ?? []}
         keyExtractor={(i: any) => i.foodItemId}
         contentContainerStyle={{ gap: spacing.md }}
         ListEmptyComponent={
           <EmptyState
-            title="Lista vacía"
-            message="Genera un plan de comidas para ver aquí los ingredientes que necesitas comprar."
+            title={t('social.shopping.emptyTitle')}
+            message={t('social.shopping.emptyMessage')}
           />
         }
         renderItem={({ item }: any) => (
@@ -30,15 +32,15 @@ export default function ShoppingListScreen() {
               {item.foodName}
             </AppText>
             <AppText variant="small" tone="muted" style={{ marginTop: spacing.xs }}>
-              {Math.round(item.neededGrams)}g necesarios
+              {Math.round(item.neededGrams)}g {t('social.shopping.needed')}
             </AppText>
             {item.suggestedPackage ? (
               <AppText variant="small" tone="success" weight="semibold" style={{ marginTop: spacing.sm }}>
-                Comprar: {item.suggestedPackage.productNameRaw} (${item.suggestedPackage.price})
+                {t('social.shopping.buyPrefix')}{item.suggestedPackage.productNameRaw} (${item.suggestedPackage.price})
               </AppText>
             ) : (
               <AppText variant="small" tone="faint" style={{ marginTop: spacing.sm }}>
-                Precio no disponible hoy
+                {t('social.shopping.noPrice')}
               </AppText>
             )}
           </Card>
