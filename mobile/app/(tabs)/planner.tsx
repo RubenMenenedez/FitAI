@@ -1,4 +1,5 @@
 import { View, Text, FlatList, Pressable } from 'react-native';
+import { router } from 'expo-router';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiClient } from '../../src/api/client';
 
@@ -8,7 +9,11 @@ export default function PlannerScreen() {
   const queryClient = useQueryClient();
   const generatePlan = useMutation({
     mutationFn: () => apiClient.post('/meal-plans/generate', { weekStartDate: new Date().toISOString().slice(0, 10) }),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['meal-plan'] }),
+    onSuccess: (response) => {
+      queryClient.invalidateQueries({ queryKey: ['meal-plan'] });
+      const planId = (response as any)?.data?.id;
+      if (planId) router.push({ pathname: '/(tabs)/shopping-list', params: { mealPlanId: String(planId) } });
+    },
   });
 
   return (

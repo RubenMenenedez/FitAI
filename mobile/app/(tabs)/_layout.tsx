@@ -27,6 +27,10 @@ export default function TabsLayout() {
         name="progress-photos"
         options={{ title: 'Fotos', tabBarLabel: 'Fotos' }}
       />
+      <Tabs.Screen
+        name="shopping-list"
+        options={{ href: null }}
+      />
     </Tabs>
   );
 }
