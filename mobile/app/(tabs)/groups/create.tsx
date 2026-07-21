@@ -1,8 +1,9 @@
 import { useState } from 'react';
-import { View, Text, TextInput, Pressable } from 'react-native';
+import { View } from 'react-native';
 import { router } from 'expo-router';
 import { useMutation } from '@tanstack/react-query';
 import { apiClient } from '../../../src/api/client';
+import { Screen, Field, Chip, Button, AppText, spacing } from '../../../src/ui';
 
 export default function CreateGroupScreen() {
   const [name, setName] = useState('');
@@ -13,11 +14,36 @@ export default function CreateGroupScreen() {
   });
 
   return (
-    <View style={{ flex: 1, padding: 24 }}>
-      <TextInput placeholder="Nombre del grupo" value={name} onChangeText={setName} />
-      <Pressable onPress={() => setVisibility('private')}><Text style={{ fontWeight: visibility === 'private' ? '700' : '400' }}>Privado</Text></Pressable>
-      <Pressable onPress={() => setVisibility('public')}><Text style={{ fontWeight: visibility === 'public' ? '700' : '400' }}>Público</Text></Pressable>
-      <Pressable onPress={() => create.mutate()}><Text>Crear</Text></Pressable>
-    </View>
+    <Screen title="Crear grupo" keyboard scroll>
+      <Field
+        label="Nombre del grupo"
+        placeholder="Nombre del grupo"
+        value={name}
+        onChangeText={setName}
+      />
+
+      <AppText variant="small" weight="semibold" tone="muted" style={{ marginBottom: spacing.sm }}>
+        Visibilidad
+      </AppText>
+      <View style={{ flexDirection: 'row', gap: spacing.sm, marginBottom: spacing.xl }}>
+        <Chip
+          label="Privado"
+          active={visibility === 'private'}
+          onPress={() => setVisibility('private')}
+        />
+        <Chip
+          label="Público"
+          active={visibility === 'public'}
+          onPress={() => setVisibility('public')}
+        />
+      </View>
+
+      <Button
+        title="Crear"
+        variant="success"
+        loading={create.isPending}
+        onPress={() => create.mutate()}
+      />
+    </Screen>
   );
 }

@@ -1,7 +1,8 @@
-import { View, Text, FlatList, Pressable } from 'react-native';
+import { View, FlatList } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiClient } from '../../../src/api/client';
+import { Screen, Card, AppText, Chip, EmptyState, spacing } from '../../../src/ui';
 
 const EMOJIS = ['🔥', '💪', '👏', '🎉', '❤️'];
 
@@ -16,21 +17,34 @@ export default function GroupFeedScreen() {
   });
 
   return (
-    <View style={{ flex: 1, padding: 24 }}>
+    <Screen title="Grupo">
       <FlatList
         data={posts ?? []}
         keyExtractor={(p: any) => p.id}
+        contentContainerStyle={{ gap: spacing.md }}
+        ListEmptyComponent={
+          <EmptyState
+            title="Sé el primero en publicar"
+            message="Aún no hay publicaciones en este grupo. ¡Anímate!"
+          />
+        }
         renderItem={({ item }: any) => (
-          <View style={{ marginVertical: 12 }}>
-            <Text>{item.message}</Text>
-            <View style={{ flexDirection: 'row', gap: 8 }}>
+          <Card>
+            <AppText variant="body" style={{ marginBottom: spacing.md }}>
+              {item.message}
+            </AppText>
+            <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm }}>
               {EMOJIS.map((emoji) => (
-                <Pressable key={emoji} onPress={() => react.mutate({ postId: item.id, emoji })}><Text>{emoji}</Text></Pressable>
+                <Chip
+                  key={emoji}
+                  label={emoji}
+                  onPress={() => react.mutate({ postId: item.id, emoji })}
+                />
               ))}
             </View>
-          </View>
+          </Card>
         )}
       />
-    </View>
+    </Screen>
   );
 }

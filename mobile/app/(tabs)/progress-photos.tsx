@@ -1,8 +1,9 @@
-import { View, Text, Pressable, FlatList, Image, Alert } from 'react-native';
+import { View, Image, FlatList, Alert } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { File } from 'expo-file-system';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiClient } from '../../src/api/client';
+import { Screen, Button, EmptyState, spacing, radius } from '../../src/ui';
 
 type ProgressPhoto = {
   id: string;
@@ -43,16 +44,42 @@ export default function ProgressPhotosScreen() {
   }
 
   return (
-    <View style={{ flex: 1, padding: 24 }}>
-      <Pressable onPress={confirmAndUpload}><Text>Añadir foto de progreso</Text></Pressable>
+    <Screen
+      title="Fotos de progreso"
+      subtitle="Lleva un registro visual de tu transformación"
+    >
+      <Button
+        title="Añadir foto de progreso"
+        variant="success"
+        loading={upload.isPending}
+        onPress={confirmAndUpload}
+        style={{ marginBottom: spacing.xl }}
+      />
       <FlatList
         data={photos ?? []}
         keyExtractor={(p: ProgressPhoto) => p.id}
         numColumns={2}
+        columnWrapperStyle={{ gap: spacing.sm }}
+        contentContainerStyle={{ gap: spacing.sm }}
+        ListEmptyComponent={
+          <EmptyState
+            title="Sin fotos aún"
+            message="Añade tu primera foto de progreso para empezar a comparar tu transformación."
+          />
+        }
         renderItem={({ item }: { item: ProgressPhoto }) => (
-          <Image source={{ uri: item.photoUrl }} style={{ width: 150, height: 150, margin: 4 }} />
+          <View style={{ flex: 1 }}>
+            <Image
+              source={{ uri: item.photoUrl }}
+              style={{
+                width: '100%',
+                aspectRatio: 1,
+                borderRadius: radius.lg,
+              }}
+            />
+          </View>
         )}
       />
-    </View>
+    </Screen>
   );
 }
