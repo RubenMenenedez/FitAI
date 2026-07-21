@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { z } from 'zod';
 import { requireAuth } from '../../auth/requireAuth';
-import { createGroup, joinGroupByInviteCode, listPublicGroups, createPost, listFeed, addReaction } from './groups.service';
+import { createGroup, joinGroupByInviteCode, listPublicGroups, createPost, listFeed, addReaction, isGroupStreakActiveToday } from './groups.service';
 
 export const groupsRouter = Router();
 
@@ -34,6 +34,10 @@ groupsRouter.post('/:groupId/posts', requireAuth, async (req, res) => {
 });
 
 groupsRouter.get('/:groupId/posts', requireAuth, async (req, res) => res.json(await listFeed(String(req.params['groupId'] ?? ''))));
+
+groupsRouter.get('/:groupId/streak-active', requireAuth, async (req, res) => {
+  res.json({ active: await isGroupStreakActiveToday(String(req.params['groupId'] ?? '')) });
+});
 
 groupsRouter.post('/posts/:postId/reactions', requireAuth, async (req, res) => {
   const parsed = z.object({ emoji: z.string() }).safeParse(req.body);

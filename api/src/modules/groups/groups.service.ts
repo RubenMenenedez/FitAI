@@ -1,6 +1,6 @@
 import { db } from '../../db/client';
-import { groups, groupMembers, groupPosts, groupReactions } from '../../db/schema';
-import { eq, and, desc } from 'drizzle-orm';
+import { groups, groupMembers, groupPosts, groupReactions, streaks } from '../../db/schema';
+import { eq, and, desc, inArray } from 'drizzle-orm';
 import { randomBytes } from 'node:crypto';
 
 const ALLOWED_EMOJI = ['🔥', '💪', '👏', '🎉', '❤️'];
@@ -52,4 +52,17 @@ export async function addReaction(userId: string, postId: string, emoji: string)
   const [reaction] = await db.insert(groupReactions).values({ groupPostId: postId, userId, emoji }).returning();
   if (!reaction) throw new Error('failed to add reaction');
   return reaction;
+}
+
+// Racha de grupo activa el día que todos los miembros (o el mínimo configurable)
+// registraron al menos una comida (sección 8.2).
+export async function isGroupStreakActiveToday(groupId: string, minRatio = 1.0) {
+  const members = await db.select().from(groupMembers).where(eq(groupMembers.groupId, groupId));
+  if (members.length === 0) return false;
+
+  const today = new Date().toISOString().slice(0, 10);
+  const memberStreaks = await db.select().from(streaks).where(inArray(streaks.userId, members.map((m) => m.userId)));
+  const loggedToday = memberStreaks.filter((s) => s.lastLoggedDate === today).length;
+
+  return loggedToday / members.length >= minRatio;
 }
