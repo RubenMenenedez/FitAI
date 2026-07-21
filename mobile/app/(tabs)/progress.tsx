@@ -1,8 +1,19 @@
 import { useState } from 'react';
-import { View, Text, TextInput, Pressable, FlatList } from 'react-native';
+import { View, FlatList } from 'react-native';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { apiClient } from '../../src/api/client';
 import { requestHealthPermissionsAndSync } from '../../src/health/healthSync';
+import {
+  Screen,
+  AppText,
+  Button,
+  Card,
+  Field,
+  EmptyState,
+  colors,
+  spacing,
+  radius,
+} from '../../src/ui';
 
 type WeighIn = {
   id: string;
@@ -11,6 +22,42 @@ type WeighIn = {
   bmi: number;
   bmiCategory: string;
 };
+
+function BmiChip({ category }: { category: string }) {
+  const lower = category.toLowerCase();
+  const bg =
+    lower === 'normal'
+      ? '#E9F9EF'
+      : lower.includes('sobrepeso') || lower.includes('overweight')
+      ? '#FFF7E6'
+      : lower.includes('obesidad') || lower.includes('obese')
+      ? '#FEECEC'
+      : colors.surfaceAlt;
+  const textColor =
+    lower === 'normal'
+      ? colors.successDark
+      : lower.includes('sobrepeso') || lower.includes('overweight')
+      ? colors.warning
+      : lower.includes('obesidad') || lower.includes('obese')
+      ? colors.danger
+      : colors.textMuted;
+
+  return (
+    <View
+      style={{
+        backgroundColor: bg,
+        borderRadius: radius.pill,
+        paddingHorizontal: spacing.md,
+        paddingVertical: spacing.xs,
+        alignSelf: 'flex-start',
+      }}
+    >
+      <AppText variant="tiny" weight="semibold" style={{ color: textColor }}>
+        {category}
+      </AppText>
+    </View>
+  );
+}
 
 export default function ProgressScreen() {
   const [weightKg, setWeightKg] = useState('');
@@ -27,18 +74,78 @@ export default function ProgressScreen() {
   });
 
   return (
-    <View style={{ flex: 1, padding: 24 }}>
-      <Text style={{ fontSize: 22, fontWeight: '700' }}>Progreso</Text>
-      <TextInput placeholder="Peso (kg)" keyboardType="numeric" value={weightKg} onChangeText={setWeightKg} />
-      <Pressable onPress={() => recordWeighIn.mutate()}><Text>Registrar pesaje</Text></Pressable>
-      <Pressable onPress={async () => { try { await requestHealthPermissionsAndSync(); queryClient.invalidateQueries({ queryKey: ['weigh-ins'] }); } catch { /* native module absent in Expo Go — expected */ } }}><Text>Sincronizar con Salud</Text></Pressable>
+    <Screen title="Progreso" scroll keyboard>
+      {/* Weigh-in input card */}
+      <Card style={{ marginBottom: spacing.lg }}>
+        <AppText variant="h3" weight="semibold" style={{ marginBottom: spacing.lg }}>
+          Registrar pesaje
+        </AppText>
+        <Field
+          label="Peso"
+          placeholder="0.0"
+          keyboardType="numeric"
+          value={weightKg}
+          onChangeText={setWeightKg}
+        />
+        <Button
+          title="Registrar pesaje"
+          variant="success"
+          loading={recordWeighIn.isPending}
+          onPress={() => recordWeighIn.mutate()}
+        />
+      </Card>
+
+      {/* Health sync */}
+      <Button
+        title="Sincronizar con Salud"
+        variant="secondary"
+        style={{ marginBottom: spacing.xl }}
+        onPress={async () => {
+          try {
+            await requestHealthPermissionsAndSync();
+            queryClient.invalidateQueries({ queryKey: ['weigh-ins'] });
+          } catch { /* native module absent in Expo Go — expected */ }
+        }}
+      />
+
+      {/* Weigh-ins list */}
+      <AppText variant="h3" weight="semibold" style={{ marginBottom: spacing.md }}>
+        Historial
+      </AppText>
       <FlatList
         data={weighIns ?? []}
         keyExtractor={(w) => w.id}
-        renderItem={({ item }) => (
-          <Text>{item.recordedAt}: {item.weightKg} kg (IMC {item.bmi}, {item.bmiCategory})</Text>
+        scrollEnabled={false}
+        ItemSeparatorComponent={() => <View style={{ height: spacing.md }} />}
+        ListEmptyComponent={
+          <EmptyState
+            title="Sin pesajes aún"
+            message="Registra tu primer pesaje para comenzar a ver tu progreso."
+          />
+        }
+        renderItem={({ item }: { item: any }) => (
+          <Card>
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+              <View style={{ gap: spacing.xs }}>
+                <AppText variant="h3" weight="bold">
+                  {item.weightKg} kg
+                </AppText>
+                <AppText variant="small" tone="muted">
+                  {new Date(item.recordedAt).toLocaleDateString('es-ES', {
+                    day: 'numeric',
+                    month: 'long',
+                    year: 'numeric',
+                  })}
+                </AppText>
+                <AppText variant="small" tone="muted">
+                  IMC {item.bmi}
+                </AppText>
+              </View>
+              <BmiChip category={item.bmiCategory} />
+            </View>
+          </Card>
         )}
       />
-    </View>
+    </Screen>
   );
 }

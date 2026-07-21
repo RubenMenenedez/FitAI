@@ -1,7 +1,8 @@
-import { View, Text, FlatList, Pressable } from 'react-native';
+import { View, FlatList } from 'react-native';
 import { router } from 'expo-router';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiClient } from '../../src/api/client';
+import { Screen, AppText, Button, Card, spacing } from '../../src/ui';
 
 const DAY_NAMES = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
 
@@ -17,11 +18,44 @@ export default function PlannerScreen() {
   });
 
   return (
-    <View style={{ flex: 1, padding: 24 }}>
-      <Pressable onPress={() => generatePlan.mutate()}>
-        <Text>{generatePlan.isPending ? 'Generando…' : 'Generar plan de esta semana'}</Text>
-      </Pressable>
-      <FlatList data={DAY_NAMES} keyExtractor={(d) => d} renderItem={({ item }) => <Text style={{ marginTop: 12 }}>{item}</Text>} />
-    </View>
+    <Screen title="Plan semanal" scroll>
+      <Button
+        title="Generar plan de esta semana"
+        variant="success"
+        loading={generatePlan.isPending}
+        onPress={() => generatePlan.mutate()}
+        style={{ marginBottom: spacing.xl }}
+      />
+
+      <FlatList
+        data={DAY_NAMES}
+        keyExtractor={(d) => d}
+        scrollEnabled={false}
+        ItemSeparatorComponent={() => <View style={{ height: spacing.md }} />}
+        renderItem={({ item, index }) => (
+          <Card>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.md }}>
+              <View
+                style={{
+                  width: 32,
+                  height: 32,
+                  borderRadius: 16,
+                  backgroundColor: '#FFF1E7',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                <AppText variant="small" weight="bold" tone="primary">
+                  {index + 1}
+                </AppText>
+              </View>
+              <AppText variant="body" weight="semibold">
+                {item}
+              </AppText>
+            </View>
+          </Card>
+        )}
+      />
+    </Screen>
   );
 }
