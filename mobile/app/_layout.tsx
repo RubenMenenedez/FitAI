@@ -48,7 +48,7 @@ function RootNavigation() {
       </Stack.Protected>
 
       <Stack.Protected guard={isOnboarded}>
-        <Stack.Screen name="index" />
+        <Stack.Screen name="(tabs)" />
       </Stack.Protected>
     </Stack>
   );
