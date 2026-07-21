@@ -20,20 +20,17 @@ export function suggestBestPackage(neededGrams: number, packages: PackageOption[
     return unitsNeeded * pkg.packageSizeG - neededGrams;
   }
 
-  function unitsFor(pkg: PackageOption): number {
-    return Math.ceil(neededGrams / pkg.packageSizeG);
+  // Coste total = paquetes necesarios * precio del paquete. En empate de sobrante,
+  // se prefiere el menor precio total (p. ej. 1x1kg a $85 gana a 2x500g a $45 = $90).
+  function totalCostFor(pkg: PackageOption): number {
+    return Math.ceil(neededGrams / pkg.packageSizeG) * pkg.price;
   }
 
   return packages.reduce((best, current) => {
     const bestLeftover = leftoverFor(best);
     const currentLeftover = leftoverFor(current);
     if (currentLeftover < bestLeftover) return current;
-    if (currentLeftover === bestLeftover) {
-      const bestUnits = unitsFor(best);
-      const currentUnits = unitsFor(current);
-      if (currentUnits < bestUnits) return current;
-      if (currentUnits === bestUnits && current.price < best.price) return current;
-    }
+    if (currentLeftover === bestLeftover && totalCostFor(current) < totalCostFor(best)) return current;
     return best;
   });
 }
