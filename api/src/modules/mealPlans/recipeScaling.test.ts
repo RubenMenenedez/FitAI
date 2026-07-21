@@ -16,8 +16,8 @@ describe('calculateScaleFactor', () => {
 describe('scaleIngredients', () => {
   it('multiplica base_grams por el scale_factor para cada ingrediente', () => {
     const scaled = scaleIngredients(recipeIngredients, 2);
-    expect(scaled[0].grams).toBeCloseTo(300);
-    expect(scaled[1].grams).toBeCloseTo(200);
+    expect(scaled[0]!.grams).toBeCloseTo(300);
+    expect(scaled[1]!.grams).toBeCloseTo(200);
   });
 });
 

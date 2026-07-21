@@ -18,7 +18,7 @@ describe('buildWeeklyPlanItems', () => {
 
     expect(items).toHaveLength(21); // 7 días * 3 comidas
     expect(items[0]).toMatchObject({ dayOfWeek: 0, mealType: 'breakfast', recipeId: 'b1' });
-    expect(items[0].targetCalories).toBeCloseTo(500); // 25% de 2000
-    expect(items[0].scaleFactor).toBeGreaterThan(0);
+    expect(items[0]!.targetCalories).toBeCloseTo(500); // 25% de 2000
+    expect(items[0]!.scaleFactor).toBeGreaterThan(0);
   });
 });

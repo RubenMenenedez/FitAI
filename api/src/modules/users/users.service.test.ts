@@ -21,9 +21,9 @@ describe('completeOnboarding', () => {
     });
 
     expect(chain.set).toHaveBeenCalled();
-    const setArg = chain.set.mock.calls[0][0];
+    const setArg = chain.set.mock.calls[0]![0];
     expect(Number(setArg.dailyCalorieTarget)).toBeGreaterThan(0);
     expect(Number(setArg.dailyProteinTargetG)).toBeGreaterThan(0);
-    expect(result.id).toBe('u1');
+    expect(result!.id).toBe('u1');
   });
 });

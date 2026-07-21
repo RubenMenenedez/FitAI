@@ -37,5 +37,10 @@
     "skipLibCheck": true,
 
     "esModuleInterop": true,
-  }
+  },
+
+  // Only compile application source. Without this, tsc's default '**/*' glob
+  // pulls in root config files (drizzle.config.ts, vitest.config.ts) that sit
+  // outside rootDir, breaking `npm run build` / `tsc --noEmit` with TS6059.
+  "include": ["src"]
 }
