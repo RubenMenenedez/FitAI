@@ -15,6 +15,18 @@ export default function TabsLayout() {
         name="progress"
         options={{ title: 'Progreso', tabBarLabel: 'Progreso' }}
       />
+      <Tabs.Screen
+        name="goals"
+        options={{ title: 'Objetivos', tabBarLabel: 'Objetivos' }}
+      />
+      <Tabs.Screen
+        name="groups"
+        options={{ title: 'Grupos', tabBarLabel: 'Grupos' }}
+      />
+      <Tabs.Screen
+        name="progress-photos"
+        options={{ title: 'Fotos', tabBarLabel: 'Fotos' }}
+      />
     </Tabs>
   );
 }
