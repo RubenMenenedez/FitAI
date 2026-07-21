@@ -1,5 +1,5 @@
 import {
-  pgTable, uuid, text, numeric, integer, timestamp, date, pgEnum,
+  pgTable, uuid, text, numeric, integer, timestamp, date, pgEnum, primaryKey,
 } from 'drizzle-orm/pg-core';
 
 export const sexEnum = pgEnum('sex', ['male', 'female']);
@@ -13,6 +13,10 @@ export const bmiCategoryEnum = pgEnum('bmi_category', ['underweight', 'normal', 
 export const foodSourceEnum = pgEnum('food_source', ['usda', 'off']);
 export const recipeSourceEnum = pgEnum('recipe_source', ['themealdb', 'ai_generated']);
 export const mealTypeEnum = pgEnum('meal_type', ['breakfast', 'lunch', 'dinner', 'snack']);
+export const goalTypeEnum = pgEnum('goal_type', ['target_weight', 'daily_calories', 'daily_protein', 'weekly_workouts', 'water_intake', 'custom']);
+export const goalStatusEnum = pgEnum('goal_status', ['active', 'completed', 'abandoned']);
+export const groupVisibilityEnum = pgEnum('group_visibility', ['private', 'public']);
+export const dietModeEnum = pgEnum('diet_mode', ['standard', 'keto', 'high_protein', 'vegetarian_vegan']);
 
 export const users = pgTable('users', {
   id: uuid('id').primaryKey(), // igual al id de neon_auth.users_sync
@@ -29,6 +33,7 @@ export const users = pgTable('users', {
   dailyCarbsTargetG: numeric('daily_carbs_target_g'),
   dailyFatTargetG: numeric('daily_fat_target_g'),
   subscriptionStatus: subscriptionStatusEnum('subscription_status').default('free'),
+  dietMode: dietModeEnum('diet_mode').default('standard'),
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow(),
 });
 
@@ -38,6 +43,8 @@ export const weighIns = pgTable('weigh_ins', {
   weightKg: numeric('weight_kg').notNull(),
   bmi: numeric('bmi').notNull(),
   bmiCategory: bmiCategoryEnum('bmi_category').notNull(),
+  waistCm: numeric('waist_cm'),
+  bodyFatPercent: numeric('body_fat_percent'),
   recordedAt: timestamp('recorded_at', { withTimezone: true }).defaultNow(),
 });
 
@@ -87,4 +94,69 @@ export const mealPlanItems = pgTable('meal_plan_items', {
   recipeId: uuid('recipe_id').references(() => recipes.id).notNull(),
   scaleFactor: numeric('scale_factor').notNull(),
   targetCalories: numeric('target_calories').notNull(),
+});
+
+export const goals = pgTable('goals', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  userId: uuid('user_id').references(() => users.id).notNull(),
+  goalType: goalTypeEnum('goal_type').notNull(),
+  targetValue: numeric('target_value').notNull(),
+  currentValue: numeric('current_value').default('0'),
+  targetDate: date('target_date'),
+  status: goalStatusEnum('status').default('active'),
+  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow(),
+});
+
+export const streaks = pgTable('streaks', {
+  userId: uuid('user_id').primaryKey().references(() => users.id),
+  currentStreakDays: integer('current_streak_days').default(0),
+  longestStreakDays: integer('longest_streak_days').default(0),
+  lastLoggedDate: date('last_logged_date'),
+});
+
+export const milestones = pgTable('milestones', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  userId: uuid('user_id').references(() => users.id).notNull(),
+  badgeCode: text('badge_code').notNull(),
+  earnedAt: timestamp('earned_at', { withTimezone: true }).defaultNow(),
+});
+
+export const groups = pgTable('groups', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  name: text('name').notNull(),
+  visibility: groupVisibilityEnum('visibility').notNull(),
+  createdBy: uuid('created_by').references(() => users.id).notNull(),
+  inviteCode: text('invite_code').unique(),
+  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow(),
+});
+
+export const groupMembers = pgTable('group_members', {
+  groupId: uuid('group_id').references(() => groups.id).notNull(),
+  userId: uuid('user_id').references(() => users.id).notNull(),
+  joinedAt: timestamp('joined_at', { withTimezone: true }).defaultNow(),
+}, (t) => ({ pk: primaryKey({ columns: [t.groupId, t.userId] }) }));
+
+export const groupPosts = pgTable('group_posts', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  groupId: uuid('group_id').references(() => groups.id).notNull(),
+  userId: uuid('user_id').references(() => users.id).notNull(),
+  photoAnalysisId: uuid('photo_analysis_id'), // FK to photo_analyses added in Fase 2
+  message: text('message'),
+  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow(),
+});
+
+export const groupReactions = pgTable('group_reactions', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  groupPostId: uuid('group_post_id').references(() => groupPosts.id).notNull(),
+  userId: uuid('user_id').references(() => users.id).notNull(),
+  emoji: text('emoji').notNull(),
+  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow(),
+});
+
+export const progressPhotos = pgTable('progress_photos', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  userId: uuid('user_id').references(() => users.id).notNull(),
+  photoUrl: text('photo_url').notNull(),
+  weightAtTimeKg: numeric('weight_at_time_kg'),
+  takenAt: timestamp('taken_at', { withTimezone: true }).defaultNow(),
 });
