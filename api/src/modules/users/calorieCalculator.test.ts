@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { calculateBmr, calculateTdee, calculateCalorieTarget, calculateMacros } from './calorieCalculator';
+import { calculateBmr, calculateTdee, calculateCalorieTarget, calculateMacros, calculateTargetCalories } from './calorieCalculator';
 
 describe('calculateBmr', () => {
   it('calcula TMB para un hombre (Mifflin-St Jeor)', () => {
@@ -69,5 +69,40 @@ describe('calculateMacros', () => {
     const macros = calculateMacros({ weightKg: 100, dailyCalories: 1200, goal: 'lose_fat' });
     // proteinCalories = 100*2.2*4 = 880, fatCalories = 1200*0.275 = 330, sum = 1210 > 1200
     expect(macros.carbsG).toBe(0);
+  });
+});
+
+describe('calculateBmr (Katch-McArdle when body fat known)', () => {
+  it('uses lean body mass when bodyFatPercent is provided', () => {
+    // LBM = 80*(1-0.20)=64; BMR = 370 + 21.6*64 = 1752.4
+    const bmr = calculateBmr({ sex: 'male', weightKg: 80, heightCm: 180, age: 30, bodyFatPercent: 20 });
+    expect(bmr).toBeCloseTo(1752.4, 1);
+  });
+  it('falls back to Mifflin-St Jeor when bodyFatPercent is absent', () => {
+    const bmr = calculateBmr({ sex: 'male', weightKg: 80, heightCm: 180, age: 30 });
+    expect(bmr).toBeCloseTo(10*80 + 6.25*180 - 5*30 + 5, 5);
+  });
+});
+
+describe('calculateTargetCalories', () => {
+  it('applies a rate-based deficit for fat loss', () => {
+    // dailyDelta = 0.5*7700/7 = 550; 2500-550 = 1950
+    expect(calculateTargetCalories({ tdee: 2500, goal: 'lose_fat', sex: 'male', weeklyRateKg: 0.5 })).toBe(1950);
+  });
+  it('applies a rate-based surplus for muscle gain', () => {
+    expect(calculateTargetCalories({ tdee: 2500, goal: 'gain_muscle', sex: 'male', weeklyRateKg: 0.25 })).toBe(2780);
+  });
+  it('never goes below the safety floor', () => {
+    // 1400-550=850 -> floor 1200 (female)
+    expect(calculateTargetCalories({ tdee: 1400, goal: 'lose_fat', sex: 'female', weeklyRateKg: 0.5 })).toBe(1200);
+  });
+  it('pregnancy adds calories and ignores any deficit', () => {
+    expect(calculateTargetCalories({ tdee: 2000, goal: 'lose_fat', sex: 'female', weeklyRateKg: 0.5, pregnancyStatus: 'pregnant' })).toBe(2300);
+  });
+  it('breastfeeding adds ~450 kcal', () => {
+    expect(calculateTargetCalories({ tdee: 2000, goal: 'maintain', sex: 'female', pregnancyStatus: 'breastfeeding' })).toBe(2450);
+  });
+  it('maintain keeps tdee (rounded to nearest 10)', () => {
+    expect(calculateTargetCalories({ tdee: 2333, goal: 'maintain', sex: 'male' })).toBe(2330);
   });
 });

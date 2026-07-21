@@ -20,3 +20,10 @@ describe('applyDietModeMacros', () => {
     expect(macros.proteinG).toBeCloseTo(80 * 1.8);
   });
 });
+
+describe('applyDietModeMacros — medical safety', () => {
+  it('caps protein at 0.8 g/kg for kidney disease, overriding the diet preset', () => {
+    const macros = applyDietModeMacros({ dietMode: 'high_protein', weightKg: 80, dailyCalories: 2000, medicalConditions: ['kidney_disease'] });
+    expect(macros.proteinG).toBeCloseTo(80 * 0.8); // 64g, not 2.4 g/kg
+  });
+});

@@ -17,6 +17,8 @@ export const goalTypeEnum = pgEnum('goal_type', ['target_weight', 'daily_calorie
 export const goalStatusEnum = pgEnum('goal_status', ['active', 'completed', 'abandoned']);
 export const groupVisibilityEnum = pgEnum('group_visibility', ['private', 'public']);
 export const dietModeEnum = pgEnum('diet_mode', ['standard', 'keto', 'high_protein', 'vegetarian_vegan']);
+export const pregnancyStatusEnum = pgEnum('pregnancy_status', ['none', 'pregnant', 'breastfeeding']);
+export const stressLevelEnum = pgEnum('stress_level', ['low', 'medium', 'high']);
 
 export const users = pgTable('users', {
   id: uuid('id').primaryKey(), // igual al id de neon_auth.users_sync
@@ -34,6 +36,16 @@ export const users = pgTable('users', {
   dailyFatTargetG: numeric('daily_fat_target_g'),
   subscriptionStatus: subscriptionStatusEnum('subscription_status').default('free'),
   dietMode: dietModeEnum('diet_mode').default('standard'),
+  bodyFatPercent: numeric('body_fat_percent'),
+  targetWeightKg: numeric('target_weight_kg'),
+  weeklyRateKg: numeric('weekly_rate_kg'),
+  trainingDaysPerWeek: integer('training_days_per_week'),
+  pregnancyStatus: pregnancyStatusEnum('pregnancy_status').default('none'),
+  allergies: text('allergies').array().default([]),
+  medicalConditions: text('medical_conditions').array().default([]),
+  sleepHours: numeric('sleep_hours'),
+  stressLevel: stressLevelEnum('stress_level'),
+  waterIntakeMl: numeric('water_intake_ml'),
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow(),
 });
 

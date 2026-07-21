@@ -22,6 +22,13 @@
       "when": 1784630937707,
       "tag": "0002_youthful_ink",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1784641072804,
+      "tag": "0003_massive_doctor_strange",
+      "breakpoints": true
     }
   ]
 }

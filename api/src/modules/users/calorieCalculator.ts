@@ -28,8 +28,12 @@ const FAT_PERCENT: Record<Goal, number> = {
   gain_muscle: 0.275,
 };
 
-export function calculateBmr(input: { sex: Sex; weightKg: number; heightCm: number; age: number }): number {
-  const { sex, weightKg, heightCm, age } = input;
+export function calculateBmr(input: { sex: Sex; weightKg: number; heightCm: number; age: number; bodyFatPercent?: number }): number {
+  const { sex, weightKg, heightCm, age, bodyFatPercent } = input;
+  if (bodyFatPercent !== undefined) {
+    const lbm = weightKg * (1 - bodyFatPercent / 100);
+    return 370 + 21.6 * lbm;
+  }
   const base = 10 * weightKg + 6.25 * heightCm - 5 * age;
   return sex === 'male' ? base + 5 : base - 161;
 }
@@ -40,6 +44,32 @@ export function calculateTdee(bmr: number, activityLevel: ActivityLevel): number
 
 export function calculateCalorieTarget(tdee: number, goal: Goal): number {
   return tdee * (1 + CALORIE_ADJUSTMENT[goal]);
+}
+
+const KCAL_PER_KG = 7700;
+
+export function calculateTargetCalories(input: {
+  tdee: number;
+  goal: Goal;
+  sex: Sex;
+  weeklyRateKg?: number;
+  pregnancyStatus?: 'none' | 'pregnant' | 'breastfeeding';
+}): number {
+  const { tdee, goal, sex, weeklyRateKg, pregnancyStatus } = input;
+  let target: number;
+  if (pregnancyStatus === 'pregnant') {
+    target = tdee + 300;
+  } else if (pregnancyStatus === 'breastfeeding') {
+    target = tdee + 450;
+  } else {
+    const dailyDelta = ((weeklyRateKg ?? 0.5) * KCAL_PER_KG) / 7;
+    if (goal === 'lose_fat') target = tdee - dailyDelta;
+    else if (goal === 'gain_muscle') target = tdee + dailyDelta;
+    else target = tdee;
+  }
+  const floor = sex === 'female' ? 1200 : 1500;
+  target = Math.max(target, floor);
+  return Math.round(target / 10) * 10;
 }
 
 export interface Macros {
