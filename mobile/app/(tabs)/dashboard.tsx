@@ -8,10 +8,12 @@ import {
   AppText,
   Button,
   Card,
-  Stat,
-  ProgressBar,
+  Ring,
+  MacroRing,
   colors,
   spacing,
+  fontSize,
+  fontWeight,
 } from '../../src/ui';
 
 export default function DashboardScreen() {
@@ -30,9 +32,11 @@ export default function DashboardScreen() {
     });
   }
 
-  const proteinG = user?.dailyProteinTargetG ?? 0;
-  const carbsG = user?.dailyCarbsTargetG ?? 0;
-  const fatG = user?.dailyFatTargetG ?? 0;
+  const hasData = !!user;
+  const calories = user?.dailyCalorieTarget ?? '—';
+  const proteinG = Number(user?.dailyProteinTargetG ?? 0);
+  const carbsG = Number(user?.dailyCarbsTargetG ?? 0);
+  const fatG = Number(user?.dailyFatTargetG ?? 0);
 
   return (
     <Screen
@@ -41,7 +45,7 @@ export default function DashboardScreen() {
       scroll
       headerRight={
         <Button
-          title="Cerrar sesión"
+          title="Salir"
           variant="ghost"
           fullWidth={false}
           size="md"
@@ -49,50 +53,42 @@ export default function DashboardScreen() {
         />
       }
     >
-      {/* Calorie target card */}
-      <Card accent style={{ marginBottom: spacing.lg }}>
-        <Stat
-          value={user?.dailyCalorieTarget ?? '—'}
-          unit="kcal"
-          label="Calorías objetivo"
-          tone="primary"
+      {/* Calorie goal ring */}
+      <Card style={{ alignItems: 'center', paddingVertical: spacing.xl, marginBottom: spacing.lg }}>
+        <Ring
+          size={188}
+          strokeWidth={16}
+          progress={hasData ? 1 : 0}
+          color={colors.primary}
+          center={
+            <View style={{ alignItems: 'center' }}>
+              <AppText style={{ fontSize: fontSize.display, fontWeight: fontWeight.heavy, color: colors.text }}>
+                {calories}
+              </AppText>
+              <AppText variant="small" tone="muted" weight="semibold">
+                kcal objetivo
+              </AppText>
+            </View>
+          }
         />
       </Card>
 
-      {/* Macros card */}
+      {/* Macro rings */}
       <Card style={{ marginBottom: spacing.lg }}>
-        <AppText variant="h3" weight="semibold" style={{ marginBottom: spacing.lg }}>
+        <AppText variant="h3" weight="bold" style={{ marginBottom: spacing.lg }}>
           Macros objetivo
         </AppText>
-        <ProgressBar
-          label="Proteína"
-          value={proteinG}
-          max={proteinG || 1}
-          color={colors.primary}
-          valueLabel={user ? `${proteinG} g` : '— g'}
-        />
-        <ProgressBar
-          label="Carbohidratos"
-          value={carbsG}
-          max={carbsG || 1}
-          color={colors.success}
-          valueLabel={user ? `${carbsG} g` : '— g'}
-        />
-        <ProgressBar
-          label="Grasa"
-          value={fatG}
-          max={fatG || 1}
-          color={colors.warning}
-          valueLabel={user ? `${fatG} g` : '— g'}
-        />
+        <View style={{ flexDirection: 'row', justifyContent: 'space-around' }}>
+          <MacroRing label="Proteína" value={proteinG} max={proteinG || 1} color={colors.protein} />
+          <MacroRing label="Carbos" value={carbsG} max={carbsG || 1} color={colors.carbs} />
+          <MacroRing label="Grasa" value={fatG} max={fatG || 1} color={colors.fat} />
+        </View>
       </Card>
 
       {error ? (
-        <View style={{ marginTop: spacing.sm }}>
-          <AppText tone="danger" variant="small">
-            {error}
-          </AppText>
-        </View>
+        <AppText tone="danger" variant="small" style={{ marginTop: spacing.sm }}>
+          {error}
+        </AppText>
       ) : null}
     </Screen>
   );

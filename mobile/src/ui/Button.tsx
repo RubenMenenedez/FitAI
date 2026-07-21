@@ -15,7 +15,7 @@ export interface ButtonProps extends Omit<PressableProps, 'children' | 'style'> 
 }
 
 const BG: Record<Variant, string> = {
-  primary: colors.primary,
+  primary: colors.ink,
   success: colors.success,
   secondary: colors.surface,
   ghost: 'transparent',
@@ -23,7 +23,7 @@ const BG: Record<Variant, string> = {
 };
 
 const BG_PRESSED: Record<Variant, string> = {
-  primary: colors.primaryDark,
+  primary: colors.inkPressed,
   success: colors.successDark,
   secondary: colors.surfaceAlt,
   ghost: colors.surfaceAlt,
@@ -34,7 +34,7 @@ const LABEL: Record<Variant, string> = {
   primary: colors.white,
   success: colors.white,
   secondary: colors.text,
-  ghost: colors.primary,
+  ghost: colors.text,
   danger: colors.white,
 };
 
@@ -49,7 +49,7 @@ export function Button({
   ...rest
 }: ButtonProps) {
   const isDisabled = disabled || loading;
-  const height = size === 'lg' ? 54 : 46;
+  const height = size === 'lg' ? 56 : 48;
   const isSolid = variant === 'primary' || variant === 'success' || variant === 'danger';
 
   return (
@@ -61,7 +61,7 @@ export function Button({
       style={({ pressed }) => [
         {
           height,
-          borderRadius: radius.md,
+          borderRadius: radius.pill,
           paddingHorizontal: spacing.xl,
           flexDirection: 'row',
           alignItems: 'center',
@@ -69,8 +69,8 @@ export function Button({
           gap: spacing.sm,
           backgroundColor: pressed ? BG_PRESSED[variant] : BG[variant],
           borderWidth: variant === 'secondary' ? 1.5 : 0,
-          borderColor: colors.border,
-          opacity: isDisabled ? 0.5 : 1,
+          borderColor: colors.borderStrong,
+          opacity: isDisabled ? 0.45 : 1,
           alignSelf: fullWidth ? 'stretch' : 'flex-start',
         },
         isSolid ? shadow.soft : null,
@@ -81,9 +81,7 @@ export function Button({
       {loading ? (
         <ActivityIndicator color={LABEL[variant]} size="small" />
       ) : (
-        <AppText
-          style={{ color: LABEL[variant], fontSize: fontSize.body, fontWeight: fontWeight.bold }}
-        >
+        <AppText style={{ color: LABEL[variant], fontSize: fontSize.body, fontWeight: fontWeight.bold }}>
           {title}
         </AppText>
       )}
@@ -91,7 +89,7 @@ export function Button({
   );
 }
 
-// Small pill-shaped tappable chip (used for emoji reactions, toggles, filters).
+// Pill chip for toggles / emoji reactions / filters. Active = ink outline + fill.
 export function Chip({
   label,
   active = false,
@@ -108,16 +106,16 @@ export function Chip({
       onPress={onPress}
       style={({ pressed }) => ({
         paddingHorizontal: spacing.lg,
-        paddingVertical: spacing.sm,
+        paddingVertical: spacing.md,
         borderRadius: radius.pill,
-        backgroundColor: active ? colors.primarySoft : colors.surfaceAlt,
+        backgroundColor: active ? colors.ink : colors.surfaceAlt,
         borderWidth: 1.5,
-        borderColor: active ? colors.primary : 'transparent',
+        borderColor: active ? colors.ink : 'transparent',
         opacity: pressed ? 0.7 : 1,
       })}
     >
       <View>
-        <AppText variant="small" weight="semibold" tone={active ? 'primary' : 'muted'}>
+        <AppText variant="small" weight="semibold" style={{ color: active ? colors.white : colors.textMuted }}>
           {label}
         </AppText>
       </View>

@@ -11,8 +11,8 @@ export interface CardProps extends ViewProps {
 export function Card({ children, onPress, padded = true, accent = false, style, ...rest }: CardProps) {
   const cardStyle: ViewStyle = {
     backgroundColor: colors.surface,
-    borderRadius: radius.lg,
-    padding: padded ? spacing.lg : 0,
+    borderRadius: radius.xl,
+    padding: padded ? spacing.xl : 0,
     borderWidth: 1,
     borderColor: colors.border,
     ...shadow.card,

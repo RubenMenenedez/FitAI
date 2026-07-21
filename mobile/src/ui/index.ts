@@ -4,4 +4,6 @@ export { Card } from './Card';
 export { Screen } from './Screen';
 export { Field } from './Field';
 export { Stat, ProgressBar, EmptyState } from './Data';
+export { Ring, MacroRing } from './Ring';
+export { Segmented } from './Segmented';
 export { theme, colors, spacing, radius, fontSize, fontWeight, shadow } from '../theme';

@@ -1,30 +1,40 @@
-// FitAI design system — energetic light theme.
-// Palette: energy orange primary + success green CTA (fitness/nutrition mood).
-// Consumed by the components in src/ui and by every screen. Keep values here;
-// screens should never hardcode colors/spacing.
+// FitAI design system — clean, minimal, high-contrast (Cal AI-inspired, not identical).
+// Black "ink" chrome + white cards + sparing color accents for data viz (macro
+// rings, streak orange, positive green). Consumed by src/ui and every screen.
 
 export const colors = {
-  // Brand
-  primary: '#F97316', // energy orange
-  primaryDark: '#EA580C',
-  primarySoft: '#FFF1E7', // tinted surface for orange accents
-  success: '#22C55E', // CTA green
-  successDark: '#16A34A',
-  successSoft: '#E9F9EF',
+  // Chrome — near-black ink for primary buttons / FABs / strong text.
+  ink: '#0F0F12',
+  inkPressed: '#26262B',
 
-  // Neutrals
-  bg: '#F6F7F9', // app background
+  // Brand accent (used sparingly: calorie ring, streak, highlights, active nav).
+  primary: '#FF7A1A',
+  primaryDark: '#E86A0C',
+  primarySoft: '#FFF2E8',
+
+  // Positive / success (trends up, confirmations).
+  success: '#16C47F',
+  successDark: '#0FA968',
+  successSoft: '#E4F8EF',
+
+  // Macro accents (protein / carbs / fat rings, matching the reference look).
+  protein: '#FF4D6D',
+  carbs: '#FF8A3D',
+  fat: '#3E7BFA',
+
+  // Neutrals.
+  bg: '#F4F4F5', // app background (slightly off-white so white cards pop)
   surface: '#FFFFFF', // cards
-  surfaceAlt: '#F1F5F9',
-  text: '#0F172A', // slate-900
-  textMuted: '#475569', // slate-600 (min contrast for muted per a11y)
-  textFaint: '#94A3B8', // slate-400 — only for placeholders / disabled
-  border: '#E2E8F0', // slate-200
-  borderStrong: '#CBD5E1',
+  surfaceAlt: '#F1F1F3',
+  text: '#0B0B0F', // near-black body/headings
+  textMuted: '#6B7280', // gray-500
+  textFaint: '#9CA3AF', // gray-400 — placeholders / disabled only
+  border: '#ECECEE', // hairline card border
+  borderStrong: '#E4E4E7',
 
-  // Feedback
+  // Feedback.
   danger: '#EF4444',
-  dangerSoft: '#FEECEC',
+  dangerSoft: '#FDECEC',
   warning: '#F59E0B',
 
   white: '#FFFFFF',
@@ -41,9 +51,9 @@ export const spacing = {
 } as const;
 
 export const radius = {
-  sm: 8,
-  md: 12,
-  lg: 16,
+  sm: 10,
+  md: 14,
+  lg: 18,
   xl: 24,
   pill: 999,
 } as const;
@@ -54,8 +64,8 @@ export const fontSize = {
   body: 16,
   h3: 18,
   h2: 22,
-  h1: 28,
-  display: 34,
+  h1: 30,
+  display: 40,
 } as const;
 
 export const fontWeight = {
@@ -66,20 +76,20 @@ export const fontWeight = {
   heavy: '800',
 } as const;
 
-// Card / floating element shadow (cross-platform).
+// Soft, diffuse shadows (cards float gently on the off-white bg).
 export const shadow = {
   card: {
-    shadowColor: '#0F172A',
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.08,
-    shadowRadius: 16,
+    shadowColor: '#0B0B0F',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.06,
+    shadowRadius: 20,
     elevation: 3,
   },
   soft: {
-    shadowColor: '#0F172A',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.06,
-    shadowRadius: 8,
+    shadowColor: '#0B0B0F',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.05,
+    shadowRadius: 10,
     elevation: 2,
   },
 } as const;
