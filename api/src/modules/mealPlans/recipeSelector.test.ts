@@ -30,4 +30,28 @@ describe('selectRecipeForSlot', () => {
     });
     expect(selected?.id).toBe('r2');
   });
+
+  it('la cena puede elegir del pool de comidas (platos principales)', () => {
+    const mains = [
+      { id: 'l1', mealType: 'lunch' as const, tags: [], baseCalories: 600 },
+      { id: 'd1', mealType: 'dinner' as const, tags: [], baseCalories: 550 },
+    ];
+    const selected = selectRecipeForSlot({
+      recipes: mains, mealType: 'dinner', targetCalories: 600,
+      recentlyUsedRecipeIds: [], preferredTags: [],
+    });
+    expect(selected?.id).toBe('l1'); // una receta 'lunch' es válida para la cena
+  });
+
+  it('no repite en la cena la receta ya usada en la comida del mismo día', () => {
+    const mains = [
+      { id: 'l1', mealType: 'lunch' as const, tags: [], baseCalories: 600 },
+      { id: 'l2', mealType: 'lunch' as const, tags: [], baseCalories: 620 },
+    ];
+    const selected = selectRecipeForSlot({
+      recipes: mains, mealType: 'dinner', targetCalories: 600,
+      recentlyUsedRecipeIds: ['l1'], preferredTags: [], // l1 ya fue la comida
+    });
+    expect(selected?.id).toBe('l2');
+  });
 });

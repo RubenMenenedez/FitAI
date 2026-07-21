@@ -10,9 +10,19 @@ export interface SelectRecipeInput {
 
 export const RECENT_DAYS = 3;
 
+// Lunch and dinner are both main meals drawn from the same pool of main dishes:
+// a recipe classified as `lunch` is equally valid for a `dinner` slot and vice
+// versa. Breakfast and snack keep their own pools. Repetition across a day/recent
+// days (so lunch and dinner aren't the same dish) is handled by
+// `recentlyUsedRecipeIds`, which already excludes the day's earlier picks.
+export function eligibleMealTypes(slot: CandidateRecipe['mealType']): CandidateRecipe['mealType'][] {
+  return slot === 'lunch' || slot === 'dinner' ? ['lunch', 'dinner'] : [slot];
+}
+
 export function selectRecipeForSlot(input: SelectRecipeInput): CandidateRecipe | undefined {
+  const eligible = eligibleMealTypes(input.mealType);
   const candidates = input.recipes.filter(
-    (r) => r.mealType === input.mealType && !input.recentlyUsedRecipeIds.includes(r.id),
+    (r) => eligible.includes(r.mealType) && !input.recentlyUsedRecipeIds.includes(r.id),
   );
   if (candidates.length === 0) return undefined;
 
