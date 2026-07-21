@@ -3,11 +3,22 @@ import { router } from 'expo-router';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiClient } from '../../src/api/client';
 import { Screen, AppText, Button, Card, spacing } from '../../src/ui';
+import { useT } from '../../src/i18n';
 
-const DAY_NAMES = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
+const DAY_KEYS = [
+  'tabs.planner.monday',
+  'tabs.planner.tuesday',
+  'tabs.planner.wednesday',
+  'tabs.planner.thursday',
+  'tabs.planner.friday',
+  'tabs.planner.saturday',
+  'tabs.planner.sunday',
+] as const;
 
 export default function PlannerScreen() {
   const queryClient = useQueryClient();
+  const t = useT();
+
   const generatePlan = useMutation({
     mutationFn: () => apiClient.post('/meal-plans/generate', { weekStartDate: new Date().toISOString().slice(0, 10) }),
     onSuccess: (response) => {
@@ -18,9 +29,9 @@ export default function PlannerScreen() {
   });
 
   return (
-    <Screen title="Plan semanal" scroll>
+    <Screen title={t('tabs.planner.title')} scroll>
       <Button
-        title="Generar plan de esta semana"
+        title={t('tabs.planner.generateButton')}
         variant="success"
         loading={generatePlan.isPending}
         onPress={() => generatePlan.mutate()}
@@ -28,7 +39,7 @@ export default function PlannerScreen() {
       />
 
       <FlatList
-        data={DAY_NAMES}
+        data={DAY_KEYS}
         keyExtractor={(d) => d}
         scrollEnabled={false}
         ItemSeparatorComponent={() => <View style={{ height: spacing.md }} />}
@@ -50,7 +61,7 @@ export default function PlannerScreen() {
                 </AppText>
               </View>
               <AppText variant="body" weight="semibold">
-                {item}
+                {t(item)}
               </AppText>
             </View>
           </Card>

@@ -15,6 +15,7 @@ import {
   fontSize,
   fontWeight,
 } from '../../src/ui';
+import { useT, LanguageToggle } from '../../src/i18n';
 
 export default function DashboardScreen() {
   const { data: user } = useQuery({
@@ -24,11 +25,12 @@ export default function DashboardScreen() {
 
   const { signOut } = useAuth();
   const [error, setError] = useState<string | null>(null);
+  const t = useT();
 
   function handleSignOut() {
     setError(null);
     signOut().catch(() => {
-      setError('No se pudo cerrar sesión. Inténtalo de nuevo.');
+      setError(t('tabs.dashboard.signOutError'));
     });
   }
 
@@ -40,12 +42,12 @@ export default function DashboardScreen() {
 
   return (
     <Screen
-      title="Hoy"
-      subtitle="Tu resumen de hoy"
+      title={t('tabs.dashboard.title')}
+      subtitle={t('tabs.dashboard.subtitle')}
       scroll
       headerRight={
         <Button
-          title="Salir"
+          title={t('tabs.dashboard.signOut')}
           variant="ghost"
           fullWidth={false}
           size="md"
@@ -66,7 +68,7 @@ export default function DashboardScreen() {
                 {calories}
               </AppText>
               <AppText variant="small" tone="muted" weight="semibold">
-                kcal objetivo
+                {t('tabs.dashboard.kcalGoal')}
               </AppText>
             </View>
           }
@@ -76,12 +78,12 @@ export default function DashboardScreen() {
       {/* Macro rings */}
       <Card style={{ marginBottom: spacing.lg }}>
         <AppText variant="h3" weight="bold" style={{ marginBottom: spacing.lg }}>
-          Macros objetivo
+          {t('tabs.dashboard.macrosTitle')}
         </AppText>
         <View style={{ flexDirection: 'row', justifyContent: 'space-around' }}>
-          <MacroRing label="Proteína" value={proteinG} max={proteinG || 1} color={colors.protein} />
-          <MacroRing label="Carbos" value={carbsG} max={carbsG || 1} color={colors.carbs} />
-          <MacroRing label="Grasa" value={fatG} max={fatG || 1} color={colors.fat} />
+          <MacroRing label={t('tabs.dashboard.protein')} value={proteinG} max={proteinG || 1} color={colors.protein} />
+          <MacroRing label={t('tabs.dashboard.carbs')} value={carbsG} max={carbsG || 1} color={colors.carbs} />
+          <MacroRing label={t('tabs.dashboard.fat')} value={fatG} max={fatG || 1} color={colors.fat} />
         </View>
       </Card>
 
@@ -90,6 +92,10 @@ export default function DashboardScreen() {
           {error}
         </AppText>
       ) : null}
+
+      <View style={{ alignItems: 'center', marginTop: spacing.lg }}>
+        <LanguageToggle />
+      </View>
     </Screen>
   );
 }

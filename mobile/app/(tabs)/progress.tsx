@@ -14,6 +14,7 @@ import {
   spacing,
   radius,
 } from '../../src/ui';
+import { useT } from '../../src/i18n';
 
 type WeighIn = {
   id: string;
@@ -62,6 +63,7 @@ function BmiChip({ category }: { category: string }) {
 export default function ProgressScreen() {
   const [weightKg, setWeightKg] = useState('');
   const queryClient = useQueryClient();
+  const t = useT();
 
   const { data: weighIns } = useQuery({
     queryKey: ['weigh-ins'],
@@ -74,21 +76,21 @@ export default function ProgressScreen() {
   });
 
   return (
-    <Screen title="Progreso" scroll keyboard>
+    <Screen title={t('tabs.progress.title')} scroll keyboard>
       {/* Weigh-in input card */}
       <Card style={{ marginBottom: spacing.lg }}>
         <AppText variant="h3" weight="semibold" style={{ marginBottom: spacing.lg }}>
-          Registrar pesaje
+          {t('tabs.progress.recordWeighIn')}
         </AppText>
         <Field
-          label="Peso"
+          label={t('tabs.progress.weightLabel')}
           placeholder="0.0"
           keyboardType="numeric"
           value={weightKg}
           onChangeText={setWeightKg}
         />
         <Button
-          title="Registrar pesaje"
+          title={t('tabs.progress.recordButton')}
           variant="success"
           loading={recordWeighIn.isPending}
           onPress={() => recordWeighIn.mutate()}
@@ -97,7 +99,7 @@ export default function ProgressScreen() {
 
       {/* Health sync */}
       <Button
-        title="Sincronizar con Salud"
+        title={t('tabs.progress.syncHealth')}
         variant="secondary"
         style={{ marginBottom: spacing.xl }}
         onPress={async () => {
@@ -110,7 +112,7 @@ export default function ProgressScreen() {
 
       {/* Weigh-ins list */}
       <AppText variant="h3" weight="semibold" style={{ marginBottom: spacing.md }}>
-        Historial
+        {t('tabs.progress.historyTitle')}
       </AppText>
       <FlatList
         data={weighIns ?? []}
@@ -119,8 +121,8 @@ export default function ProgressScreen() {
         ItemSeparatorComponent={() => <View style={{ height: spacing.md }} />}
         ListEmptyComponent={
           <EmptyState
-            title="Sin pesajes aún"
-            message="Registra tu primer pesaje para comenzar a ver tu progreso."
+            title={t('tabs.progress.emptyTitle')}
+            message={t('tabs.progress.emptyMessage')}
           />
         }
         renderItem={({ item }: { item: any }) => (
@@ -138,7 +140,7 @@ export default function ProgressScreen() {
                   })}
                 </AppText>
                 <AppText variant="small" tone="muted">
-                  IMC {item.bmi}
+                  {t('tabs.progress.bmiLabel')} {item.bmi}
                 </AppText>
               </View>
               <BmiChip category={item.bmiCategory} />

@@ -1,7 +1,10 @@
 import { Tabs } from 'expo-router/js-tabs';
 import { colors } from '../../src/theme';
+import { useT } from '../../src/i18n';
 
 export default function TabsLayout() {
+  const t = useT();
+
   return (
     <Tabs
       screenOptions={{
@@ -22,12 +25,12 @@ export default function TabsLayout() {
         },
       }}
     >
-      <Tabs.Screen name="dashboard" options={{ title: 'Hoy', tabBarLabel: 'Hoy' }} />
-      <Tabs.Screen name="planner" options={{ title: 'Plan', tabBarLabel: 'Plan' }} />
-      <Tabs.Screen name="progress" options={{ title: 'Progreso', tabBarLabel: 'Progreso' }} />
-      <Tabs.Screen name="goals" options={{ title: 'Objetivos', tabBarLabel: 'Objetivos' }} />
-      <Tabs.Screen name="groups" options={{ title: 'Grupos', tabBarLabel: 'Grupos' }} />
-      <Tabs.Screen name="progress-photos" options={{ title: 'Fotos', tabBarLabel: 'Fotos' }} />
+      <Tabs.Screen name="dashboard" options={{ title: t('tabs.nav.today'), tabBarLabel: t('tabs.nav.today') }} />
+      <Tabs.Screen name="planner" options={{ title: t('tabs.nav.plan'), tabBarLabel: t('tabs.nav.plan') }} />
+      <Tabs.Screen name="progress" options={{ title: t('tabs.nav.progress'), tabBarLabel: t('tabs.nav.progress') }} />
+      <Tabs.Screen name="goals" options={{ title: t('tabs.nav.goals'), tabBarLabel: t('tabs.nav.goals') }} />
+      <Tabs.Screen name="groups" options={{ title: t('tabs.nav.groups'), tabBarLabel: t('tabs.nav.groups') }} />
+      <Tabs.Screen name="progress-photos" options={{ title: t('tabs.nav.photos'), tabBarLabel: t('tabs.nav.photos') }} />
       <Tabs.Screen name="shopping-list" options={{ href: null }} />
     </Tabs>
   );
